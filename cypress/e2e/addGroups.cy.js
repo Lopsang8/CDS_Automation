@@ -1,7 +1,7 @@
-import { faker } from "@faker-js/faker";
+import { fa, faker } from "@faker-js/faker";
 
-const viewportWidth = 1200;
-const viewportHeight = 800;
+const viewportWidth = 1920;
+const viewportHeight = 1080;
 
 describe("Groups", () => {
   beforeEach(() => {
@@ -100,48 +100,62 @@ describe("Groups", () => {
     var groupName = rawGroupName.replace(/[^a-zA-Z0-9'_-]/g, "");
     cy.get('[aria-label="Group Name"]').type(groupName);
     cy.get(".add-group-section").should("exist");
-    // cy.get(".text-success-600")
-    //   .should("be.visible")
-    //   .get('span.slider[aria-selected="false"]');
+    
     let selectedUsers1 = 0;
-    function checkNotAssignedUsersOnFirstPage() {
-      cy.get("tbody tr").each(($row) => {
-        cy.wrap($row).within(() => {
-          cy.get("td:nth-child(4)").then(($statusCell) => {
-            const statusText = $statusCell.text().trim();
-            if (statusText === "Not Assigned") {
-              cy.get('td:nth-child(5) input[type="checkbox"]').check({
-                force: true,
-              });
-              selectedUsers1++;
-              if (selectedUsers1 >= 2) {
-                return false;
-              }
-            }
-          });
+    let stopChecking = false;
+
+    function checkNotAssignedUsersOnCurrentPage1() {
+      return cy.get("tbody tr").then(($rows) => {
+        // Collect data on the current page and select up to two "Not Assigned" users
+        $rows.each((index, $row) => {
+          if (selectedUsers1 <= 2 || stopChecking) {
+            return false; // Stop checking when at least two "Not Assigned" users are selected or stopChecking is true
+          }
+
+          const $statusCell = $row.querySelector("td:nth-child(4)");
+          const statusText = $statusCell.textContent.trim();
+
+          if (statusText === "Not Assigned") {
+            const $checkbox = $row.querySelector(
+              'td:nth-child(5) input[type="checkbox"]'
+            );
+            cy.wrap($checkbox).check({ force: true });
+            selectedUsers1++;
+          }
         });
       });
     }
-    function goToNextPage() {
-      cy.get(".next").should("exist").click();
+
+    function goToNextPage1() {
+      return cy.get(".next").should("exist").click();
     }
-    function checkNotAssignedUsersOnAllPages() {
-      checkNotAssignedUsersOnFirstPage();
-      cy.get(".next")
-        .should("exist")
-        .then(($nextButton) => {
-          if ($nextButton.is(":enabled")) {
-            goToNextPage();
-          }
-        });
+
+    function checkNotAssignedUsersOnAllPages1() {
+      return checkNotAssignedUsersOnCurrentPage1().then(() => {
+        if (selectedUsers1 < 2 && !stopChecking) {
+          cy.get(".next")
+            .should("exist")
+            .then(($nextButton) => {
+              if ($nextButton.is(":enabled")) {
+                return goToNextPage1().then(() => {
+                  return checkNotAssignedUsersOnAllPages1(); // Recursively check on the next page
+                });
+              } else {
+                stopChecking = true; // Stop checking when the "Next" button is disabled
+              }
+            });
+        }
+      });
     }
-    checkNotAssignedUsersOnAllPages();
+
+    checkNotAssignedUsersOnAllPages1();
+
     cy.get(".bg-success-500").should("exist").click();
     cy.get(".Toastify")
       .should("exist")
       .should("contain.text", "The permissions field is required.");
     cy.wait(3000);
-    cy.get('.filter-wrap > .gap-x-2').click();
+    cy.get(".filter-wrap > .gap-x-2").click();
     // cy.get('[data-testid="add-permission-button"]').click();
     cy.wait(2000);
     cy.get("div.table-wrap").should("be.visible"); //permissions table
@@ -160,6 +174,6 @@ describe("Groups", () => {
     cy.get(".Toastify")
       .should("exist")
       .should("have.text", "Group Created Successfully");
-      console.log('Group Created Successfully');
+    console.log("Group Created Successfully");
   });
 });
