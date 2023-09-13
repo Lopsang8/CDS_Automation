@@ -106,22 +106,40 @@ describe("Groups", () => {
     let stopChecking = false; // Flag to stop further checking
 
     function checkNotAssignedUsersOnCurrentPage1() {
-      // Use Cypress's each() function to iterate through each row in the table
-      cy.get("tbody tr").each(($row) => {
+      return cy.get("tbody tr").each(($row) => {
+        // Collect data on the current page and select up to two "Not Assigned" users
+
         if (selectedUsers1 >= 2 || stopChecking) {
           return false; // Stop checking when at least two "Not Assigned" users are selected or stopChecking is true
         }
-
-        // Find the status cell in the current row and extract its text
         const $statusCell = $row.find("td:nth-child(4)");
         const statusText = $statusCell.text().trim();
 
-        // Check if the status is "Not Assigned" and select the checkbox if so
         if (statusText === "Not Assigned") {
           const $checkbox = $row.find('td:nth-child(5) input[type="checkbox"]');
-          cy.wrap($checkbox).check({ force: true }); // Check the checkbox
-          selectedUsers1++; // Increment the counter for selected users
+          cy.wrap($checkbox)
+            .check({ force: true })
+            .then(() => {
+              selectedUsers1++;
+            });
         }
+
+        // cy.wrap($row).within(() => {
+        //   return cy.get("td:nth-child(4)").then(($statusCell) => {
+        //     const statusText = $statusCell.text().trim();
+
+        //     if (statusText === "Not Assigned") {
+        //       cy.get('td:nth-child(5) input[type="checkbox"]')
+        //         .check({
+        //           force: true,
+        //         })
+        //         .then(() => {
+        //           // cy.wrap($checkbox).check({ force: true });
+        //           selectedUsers1++;
+        //         });
+        //     }
+        //   });
+        // });
       });
     }
 
@@ -129,79 +147,25 @@ describe("Groups", () => {
       return cy.get("button.next").should("exist").click();
     }
 
-    // Function to check "Not Assigned" users on all pages recursively
     function checkNotAssignedUsersOnAllPages1() {
-      const recursiveCheck = () => {
-        checkNotAssignedUsersOnCurrentPage1(); // Check the current page
-
+      return checkNotAssignedUsersOnCurrentPage1().then(() => {
         if (selectedUsers1 < 2 && !stopChecking) {
           cy.get("button.next")
             .should("exist")
             .then(($nextButton) => {
               if ($nextButton.is(":enabled")) {
-                goToNextPage1(); // Go to the next page if the "Next" button is enabled
-                recursiveCheck(); // Recursively check on the next page
+                return goToNextPage1().then(() => {
+                  return checkNotAssignedUsersOnAllPages1(); // Recursively check on the next page
+                });
               } else {
                 stopChecking = true; // Stop checking when the "Next" button is disabled
               }
             });
         }
-      };
-
-      recursiveCheck(); // Start the recursive check
+      });
     }
+
     checkNotAssignedUsersOnAllPages1();
-
-    // function checkNotAssignedUsersOnCurrentPage1() {
-    //   return cy.get("tbody tr").each(($row) => {
-    //     // Collect data on the current page and select up to two "Not Assigned" users
-
-    //     if (selectedUsers1 >= 2 || stopChecking) {
-    //       return false; // Stop checking when at least two "Not Assigned" users are selected or stopChecking is true
-    //     }
-
-    //     cy.wrap($row).within(() => {
-    //       return cy.get("td:nth-child(4)").then(($statusCell) => {
-    //         const statusText = $statusCell.text().trim();
-
-    //         if (statusText === "Not Assigned") {
-    //           cy.get('td:nth-child(5) input[type="checkbox"]')
-    //             .check({
-    //               force: true,
-    //             })
-    //             .then(() => {
-    //               // cy.wrap($checkbox).check({ force: true });
-    //               selectedUsers1++;
-    //             });
-    //         }
-    //       });
-    //     });
-    //   });
-    // }
-
-    // function goToNextPage1() {
-    //   return cy.get("button.next").should("exist").click();
-    // }
-
-    // function checkNotAssignedUsersOnAllPages1() {
-    //   return checkNotAssignedUsersOnCurrentPage1().then(() => {
-    //     if (selectedUsers1 < 2 && !stopChecking) {
-    //       cy.get("button.next")
-    //         .should("exist")
-    //         .then(($nextButton) => {
-    //           if ($nextButton.is(":enabled")) {
-    //             return goToNextPage1().then(() => {
-    //               return checkNotAssignedUsersOnAllPages1(); // Recursively check on the next page
-    //             });
-    //           } else {
-    //             stopChecking = true; // Stop checking when the "Next" button is disabled
-    //           }
-    //         });
-    //     }
-    //   });
-    // }
-
-    // checkNotAssignedUsersOnAllPages1();
 
     cy.get(".bg-success-500").should("exist").click();
     cy.get(".Toastify")
