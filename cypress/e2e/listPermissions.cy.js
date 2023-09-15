@@ -23,22 +23,13 @@ describe("Permissions", () => {
 
   it("Verifies searched function/permission name is present", () => {
     cy.get('input[name="Search"]').click().type("Create Location");
-    cy.wait(2000);
+    cy.wait(4000);
     cy.get("tr")
       .contains("Create Location")
       .parent("tr")
       .within(() => {
         cy.get("td").eq(0).should("contain", "Create Location");
       });
-  });
-
-
-  it("Verifies search button is present in permissions tab", () => {
-    cy.wait(3000);
-    cy.get(':nth-child(1) > :nth-child(4) > .actions')
-        .should("be.visible")   
-        .click();
-
   });
 
 

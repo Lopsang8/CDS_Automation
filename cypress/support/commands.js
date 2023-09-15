@@ -1,7 +1,13 @@
 // -- This is a parent command --
-Cypress.Commands.add('login', (email, password) => {
-  
- })
+Cypress.Commands.add("login", (email, password) => {
+
+});
+
+
+
+Cypress.Commands.add("viewports", (viewportWidth, viewportHeight) => {
+    cy.viewport(viewportWidth, viewportHeight);
+});
 //
 //
 // -- This is a child command --
@@ -16,7 +22,7 @@ Cypress.Commands.add('login', (email, password) => {
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 // Cypress.Commands.add('generateFixture', () => {
 //     const faker = require('@faker-js/faker')
-  
+
 //     cy.writeFile('cypress/fixtures/stories.json', {
 //       'hits':Cypress._.times(20, () => {
 //         return {
