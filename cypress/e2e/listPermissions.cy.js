@@ -2,6 +2,7 @@
 describe("Permissions", () => {
 
   beforeEach(() => {
+    cy.viewport(1920, 1080);
     cy.visit("/permissions/groups");
     cy.get("#headlessui-tabs-tab-\\:r1\\:")
       .invoke("removeAttr", "target")

@@ -64,7 +64,7 @@ describe("Locations", () => {
       10000000 + Math.random() * 90000000
     ).toString();
     const validPhoneNumber = `05${randomDigits}`;
-    cy.get("#locationName").type(locationName);
+    cy.get("#locationName").type(locationName)
     cy.get("#email").type(faker.internet.email());
     cy.get('[placeholder="04XX XXX XXX or 05XX XXX XXX"]').type(
       validPhoneNumber
@@ -74,7 +74,7 @@ describe("Locations", () => {
     );
     cy.get(".add-location-groups").should("be.visible");
     cy.get("tbody tr").then(($rows) => {
-      // Generate two random indices within the range of available rows
+      // Generates two random indices within the range of available rows
       const randomIndices = [];
       while (randomIndices.length < 2) {
         const randomIndex = Math.floor(Math.random() * $rows.length);
@@ -83,7 +83,7 @@ describe("Locations", () => {
         }
       }
 
-      // Check the checkboxes for the randomly selected rows
+      // Checks the checkboxes for the randomly selected rows
       randomIndices.forEach((randomIndex) => {
         const $row = $rows.eq(randomIndex);
         cy.wrap($row).within(() => {

@@ -9,6 +9,7 @@ describe('Pagination and show items', () => {
 
 
     it('should interact with pagination and show items dropdown', () => {
+        cy.viewport(1920, 1080);
         cy.visit(allRoutes[0]);
         cy.get('button.next').click()
         cy.get('button.prev').click()

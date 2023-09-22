@@ -2,9 +2,7 @@ const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
   e2e: {
-    baseUrl: "https://dev-sellandparker.webo.dev",
-    viewportWidth: 1920,
-    viewportHeight: 1080,
+    baseUrl: "https://dev-sellandparker.webo.dev/",
     defaultCommandTimeout: 7000,
 
 
