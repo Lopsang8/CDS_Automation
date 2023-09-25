@@ -1,13 +1,29 @@
-// -- This is a parent command --
-Cypress.Commands.add("login", (email, password) => {
 
-});
+Cypress.Commands.add("login", (email, password) => {});
+
 
 
 
 Cypress.Commands.add("viewports", (viewportWidth, viewportHeight) => {
-    cy.viewport(viewportWidth, viewportHeight);
+  cy.viewport(viewportWidth, viewportHeight);
 });
+
+
+
+// Custom command to visit the edit location page
+Cypress.Commands.add("visitEditLocationPage", (id) => {
+    cy.visit(`https://dev-sellandparker.webo.dev/locations/${id}/edit`);
+  });
+
+
+
+  // Custom command to fetch location data from the database
+  Cypress.Commands.add("requestLocation", (uuid) => {
+    return cy.request({
+      method: "GET",
+      url: `https://be-cds.webo.dev/api/v1/locations/${uuid}`,
+    }).then((response) => response.body);
+  });
 //
 //
 // -- This is a child command --

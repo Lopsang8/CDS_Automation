@@ -1,6 +1,6 @@
 import { fa, faker } from "@faker-js/faker";
 
-describe("Locations", () => {
+describe(" Add Location", () => {
   beforeEach(() => {
     cy.viewport(1920, 1080);
     cy.visit("/locations");
@@ -69,6 +69,12 @@ describe("Locations", () => {
     cy.get('[placeholder="04XX XXX XXX or 05XX XXX XXX"]').type(
       validPhoneNumber
     );
+
+    // const addData = {
+    //   locationName: locationName,
+    //   email: faker.internet.email(),
+    //   phone: validPhoneNumber
+    // };
     cy.get(".add-locations > :nth-child(1) > :nth-child(2)").should(
       "be.visible"
     );
