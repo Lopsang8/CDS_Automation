@@ -1,5 +1,5 @@
 {
-  "name": "cypress-practice",
+  "name": "CDS_Automation",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,10 +9,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "cypress": "^12.17.4"
-  },
   "devDependencies": {
-    "@faker-js/faker": "^8.0.2"
+    "@faker-js/faker": "^8.0.2",
+    "cypress": "^13.3.0"
   }
 }
