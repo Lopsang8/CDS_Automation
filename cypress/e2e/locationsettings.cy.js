@@ -20,23 +20,19 @@ describe("Location settings", () => {
     cy.get(".text-neutral-600").should("have.text", "Local Settings");
     cy.log("Location settings form title is present");
     cy.get("#eftpos_transaction_limit").click().clear();
-    cy.get(".error-message").should(
-      "have.text",
+    cy.errorMessage(
       " EFTPOS transcation limit must be a number"
     );
     cy.get("#eftpos_daily_machine_limit").click().clear();
-    cy.get(".error-message").should(
-      "have.text",
+    cy.errorMessage(
       " EFTPOS transcation limit must be a number EFTPOS daily machine limit must be a number"
     );
     cy.get("#cds_daily_cash_payment_limit").click().clear();
-    cy.get(".error-message").should(
-      "have.text",
+    cy.errorMessage(
       " EFTPOS transcation limit must be a number EFTPOS daily machine limit must be a number CDS daily cash payment limit must be a number"
     );
     cy.get("#cds_tag_transaction_limit").click().clear();
-    cy.get(".error-message").should(
-      "have.text",
+    cy.errorMessage(
       " EFTPOS transcation limit must be a number EFTPOS daily machine limit must be a number CDS daily cash payment limit must be a number CDS tag transaction limit  must be a number"
     );
     cy.log("Prices/Limits form validation is verified");
@@ -49,33 +45,27 @@ describe("Location settings", () => {
       .click();
     cy.log("Bank details tab is present and clicked");
     cy.get('#bank_code').click().clear();
-    cy.get(".error-message").should(
-      "have.text",
+    cy.errorMessage(
       " Bank code is required"
     );
     cy.get('#bank_user_name').click().clear();
-    cy.get(".error-message").should(
-      "have.text",
+    cy.errorMessage(
       " Bank code is required Bank user number is required"
     );
     cy.get('#bank_user_number').click().clear();
-    cy.get(".error-message").should(
-      "have.text",
+    cy.errorMessage(
       " Bank code is required Bank user number is required Bank user number must be a number"
     );
     cy.get('#bank_file_sequence').click().clear();
-    cy.get(".error-message").should(
-      "have.text",
+    cy.errorMessage(
       " Bank code is required Bank user number is required Bank user number must be a number Bank file sequence must be a number between 0 to 99"
     );
     cy.get('#bank_account_bsb').click().clear();
-    cy.get(".error-message").should(
-      "have.text",
+    cy.errorMessage(
       " Bank code is required Bank user number is required Bank user number must be a number Bank file sequence must be a number between 0 to 99 Bank account BSB must be a number"
     );
     cy.get('#bank_account_number').click().clear();
-    cy.get(".error-message").should(
-      "have.text",
+    cy.errorMessage(
       " Bank code is required Bank user number is required Bank user number must be a number Bank file sequence must be a number between 0 to 99 Bank account BSB must be a number Bank accont number must be a number"
     );
     cy.log("Bank Details form validation is verified");

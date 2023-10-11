@@ -1,11 +1,8 @@
 import { fa, faker } from "@faker-js/faker";
 
-const viewportWidth = 1920;
-const viewportHeight = 1080;
-
 describe("Groups", () => {
   beforeEach(() => {
-    cy.viewport(viewportWidth, viewportHeight);
+    cy.viewports(1920, 1080);
     cy.visit("/permissions/groups");
   });
 
@@ -17,10 +14,7 @@ describe("Groups", () => {
     cy.visit("/permissions/groups/add-a-group");
     cy.get(".group-input-status > :nth-child(1) > .block").should("be.visible");
     cy.get('[aria-label="Group Name"]').type("Testing.RandomGroup!");
-    cy.get(".error-message")
-      // .wait(5000)
-      .should(
-        "have.text",
+    cy.errorMessage(
         " Group Name cannot contain any special characters except (', -, _)"
       );
   });
@@ -37,11 +31,8 @@ describe("Groups", () => {
     //   .should("be.visible")
     //   .get('span.slider[aria-selected="false"]');
     cy.get(".bg-success-500").should("exist").click();
-    cy.wait(2000);
-    cy.get(".Toastify")
-      .should("exist")
-      .should(
-        "have.text",
+    cy.wait(3000);
+    cy.assertToastMessage(
         "The permissions field is required.The users field is required."
       );
   });
@@ -88,10 +79,8 @@ describe("Groups", () => {
     }
     checkNotAssignedUsersOnAllPages();
     cy.get(".bg-success-500").should("exist").click();
-    cy.get(".Toastify")
-      .should("exist")
-      .should("contain.text", "The permissions field is required.");
-    console.log("The permissions field is required.");
+    cy.assertToastMessage('The permissions field is required.The users field is required.');
+   
   });
 
   it("Verifies permissions can be added and creating a group", () => {
@@ -168,9 +157,7 @@ describe("Groups", () => {
     checkNotAssignedUsersOnAllPages1();
 
     cy.get(".bg-success-500").should("exist").click();
-    cy.get(".Toastify")
-      .should("exist")
-      .should("contain.text", "The permissions field is required.");
+    cy.assertToastMessage("The permissions field is required.");
     cy.wait(3000);
     cy.get(".filter-wrap > .gap-x-2").click();
     // cy.get('[data-testid="add-permission-button"]').click();
@@ -188,8 +175,6 @@ describe("Groups", () => {
     cy.get(".bg-success-500").should("exist").click();
     cy.wait(1000);
     cy.get(".bg-success-500").should("exist").click();
-    cy.get(".Toastify")
-      .should("exist")
-      .should("have.text", "Group Created Successfully");
+    cy.assertToastMessage("Group Created Successfully");
   });
 });

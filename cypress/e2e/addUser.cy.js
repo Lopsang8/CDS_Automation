@@ -4,7 +4,7 @@ describe("Add a User", () => {
 
 
   beforeEach(() => {
-    cy.viewport(1920, 1080);
+    cy.viewports(1920, 1080);
     cy.visit("/users");
   });
 
@@ -23,10 +23,7 @@ describe("Add a User", () => {
   it("verifies add user page validations", () => {
     cy.get(".other-accessories > .gap-x-2").should("be.visible").click();
     cy.get(".bg-success-500").should("exist").click();
-    cy.get(".error-message").should(
-      "have.text",
-      ' First Name is required * Last name is required * Email is required * Username is required * FOB ID is required * Designation is required *'
-    );
+    cy.errorMessage(' First Name is required * Last name is required * Email is required * Username is required * FOB ID is required * Designation is required *'    );
     cy.log("All required fields validation is working");
   });
 
@@ -70,9 +67,7 @@ describe("Add a User", () => {
     cy.get('#designation').type(designation);
     cy.log("User's detail filled successfully")
     cy.get(".bg-success-500").should("exist").click();
-    cy.get(".Toastify")
-      .should("exist")
-      .should("have.text", "User Added Successfully");
+    cy.assertToastMessage("User Added Successfully");
     cy.log("User Added Successfully");
   });
 

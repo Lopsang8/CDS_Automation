@@ -53,9 +53,7 @@ describe("Copy Functionality", () => {
     cy.get(':nth-child(2) > .filter-wrap > .gap-x-2').should("exist").click();
     cy.get(".bg-success-500").should("exist").click();
     cy.get('.pemission-details').should("be.visible");
-    cy.get(".Toastify")
-      .should("exist")
-      .should("have.text", "User Added Successfully");
+    cy.assertToastMessage("User Added Successfully");
     cy.log("User Added Successfully");
   });
 
@@ -66,7 +64,7 @@ describe("Copy Functionality", () => {
   //     userId: this.userIdUI,
   //   }).as('apiResponse');
 
-
+ 
   // });
 
 

@@ -29,8 +29,7 @@ describe(" Add Location", () => {
     cy.get("#locationName").click().type("Testing.RandomLocation!");
     cy.get("#email").click();
     cy.wait(2000);
-    cy.get(".error-message").should(
-      "have.text",
+    cy.errorMessage(
       " Location Name can't contain any special characters"
     );
     cy.log(
@@ -39,8 +38,7 @@ describe(" Add Location", () => {
     cy.get("#locationName").click().clear();
     cy.get("#email").click();
     cy.wait(3000);
-    cy.get(".error-message").should(
-      "have.text",
+    cy.errorMessage(
       " Location name is required * Email is required *"
     );
     cy.log(
@@ -122,9 +120,7 @@ describe(" Add Location", () => {
       });
     });
     cy.get(".bg-success-500").should("exist").click();
-    cy.get(".Toastify")
-      .should("exist")
-      .should("have.text", "Location Created Successfully");
+    cy.assertToastMessage("Location Created Successfully");
     cy.log("Location created successfully");
   });
 

@@ -1,3 +1,5 @@
+import 'cypress-wait-until';
+
 
 Cypress.Commands.add("login", (email, password) => {});
 
@@ -24,6 +26,22 @@ Cypress.Commands.add("visitEditLocationPage", (id) => {
       url: `https://be-cds.webo.dev/api/v1/locations/${uuid}`,
     }).then((response) => response.body);
   });
+
+
+
+  Cypress.Commands.add("assertToastMessage", (expectedText) => {
+    cy.get(".Toastify")
+      .should("exist")
+      .and("have.text", expectedText);
+  })
+
+
+
+
+  Cypress.Commands.add("errorMessage", (expectedErrorMessage) => {
+    cy.get(".error-message")
+      .should("have.text", expectedErrorMessage);
+  })
 //
 //
 // -- This is a child command --

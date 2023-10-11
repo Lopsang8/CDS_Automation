@@ -43,8 +43,6 @@ describe("Permissions", () => {
     cy.log(`Total number of columns: 6`);
     cy.get(".bg-success-500").should("exist").click();
     cy.wait(2000);
-    cy.get(".Toastify")
-      .should("exist")
-      .should("have.text", "Successfully updated the permissions");
+    cy.assertToastMessage("Successfully updated the permissions");
   });
 });
