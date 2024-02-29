@@ -1,7 +1,28 @@
 import 'cypress-wait-until';
 
 
-Cypress.Commands.add("login", (email, password) => {});
+Cypress.Commands.add("login", (email, password) => {
+  const args = {email, password}
+  cy.session(
+    args ,
+    () => {
+    cy.visit('https://dev-sellandparker.webo.dev/login')
+    cy.wait(5000)
+    
+    
+    cy.origin('https://login.microsoftonline.com/', 
+    { args: [email, password] }, 
+    ([email, password]) => {
+
+    cy.get('#i0116').type(email)
+    cy.get('#idSIButton9').click()
+    cy.get('#i0118').type(password)
+    cy.get('#idSIButton9').click();
+    });
+    
+  })
+
+});
 
 
 
