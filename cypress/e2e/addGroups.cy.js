@@ -3,6 +3,8 @@ import { fa, faker } from "@faker-js/faker";
 describe("Groups", () => {
   beforeEach(() => {
     cy.viewports(1920, 1080);
+    cy.login('lopsang@supportwebo.onmicrosoft.com','>H^|u:~IwBF7L1{_e15')
+    cy.wait(3000)
     cy.visit("/permissions/groups");
   });
 

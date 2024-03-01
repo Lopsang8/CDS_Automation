@@ -6,21 +6,30 @@ Cypress.Commands.add("login", (email, password) => {
   cy.session(
     args ,
     () => {
-    cy.visit('https://dev-sellandparker.webo.dev/login')
+    cy.visit('https://dev-sellandparker.webo.dev/')
     cy.wait(5000)
     
-    
+    // let enteredUsername;
     cy.origin('https://login.microsoftonline.com/', 
     { args: [email, password] }, 
     ([email, password]) => {
 
     cy.get('#i0116').type(email)
+    // .invoke('val').then((username) => {
+    //   enteredUsername = username;
+    // });
     cy.get('#idSIButton9').click()
     cy.get('#i0118').type(password)
     cy.get('#idSIButton9').click();
-    });
+    cy.get('#idSIButton9').click();
     
+    });
+  
+    cy.url().should('contain','/home')
+    cy.log("Contains the home page")
   })
+  cy.visit('/')
+  
 
 });
 
