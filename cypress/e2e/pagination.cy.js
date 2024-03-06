@@ -1,6 +1,8 @@
 describe('Pagination and show items', () => {
 
     const allRoutes = [
+        '/Tickets',
+        '/Customers',
         '/permissions/groups',
         // '/locations',
         '/users',

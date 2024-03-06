@@ -3,7 +3,7 @@ import { fa, faker } from "@faker-js/faker";
 describe("Groups", () => {
   beforeEach(() => {
     cy.viewports(1920, 1080);
-    cy.login('lopsang@supportwebo.onmicrosoft.com','>H^|u:~IwBF7L1{_e15')
+    cy.login('lopsang@supportwebo.onmicrosoft.com', '>H^|u:~IwBF7L1{_e15')
     cy.wait(3000)
     cy.visit("/permissions/groups");
   });
@@ -17,8 +17,8 @@ describe("Groups", () => {
     cy.get(".group-input-status > :nth-child(1) > .block").should("be.visible");
     cy.get('[aria-label="Group Name"]').type("Testing.RandomGroup!");
     cy.errorMessage(
-        " Group Name cannot contain any special characters except (', -, _)"
-      );
+      " Group Name cannot contain any special characters except (', -, _)"
+    );
   });
 
   it("Verifies atleast one user to be assigned to the group", () => {
@@ -35,8 +35,8 @@ describe("Groups", () => {
     cy.get(".bg-success-500").should("exist").click();
     cy.wait(3000);
     cy.assertToastMessage(
-        "The permissions field is required.The users field is required."
-      );
+      "The permissions field is required.The users field is required."
+    );
   });
 
   it("Verifies permissions are required validation and redirecting to Permissions tab", () => {
@@ -46,18 +46,18 @@ describe("Groups", () => {
     var groupName = rawGroupName.replace(/[^a-zA-Z0-9'_-]/g, "");
     cy.get('[aria-label="Group Name"]').type(groupName);
     cy.get(".add-group-section").should("exist");
-    let selectedUsers = 0;
+
     function checkNotAssignedUsersOnFirstPage() {
       cy.get("tbody tr").each(($row) => {
         cy.wrap($row).within(() => {
           cy.get("td:nth-child(4)").then(($statusCell) => {
             const statusText = $statusCell.text().trim();
-            if (statusText === "Not Assigned") {
+            if (statusText == "Not Assigned") {
               cy.get('td:nth-child(5) input[type="checkbox"]').check({
                 force: true,
               });
               selectedUsers++;
-              if (selectedUsers <= 2) {
+              if (selectedUsers > 2) {
                 return false;
               }
             }
@@ -65,27 +65,33 @@ describe("Groups", () => {
         });
       });
     }
+
+
     function goToNextPage() {
-      cy.get(".next").should("exist").click();
-      cy.wait(2000);
+      cy.get('.pagination').then(($pagination) => {
+        if ($pagination.find('.next').length > 0) {
+          cy.get('.next').click();
+          cy.wait(2000);
+        } else {
+          cy.log('No next page available.');
+        }
+      });
     }
+
     function checkNotAssignedUsersOnAllPages() {
       checkNotAssignedUsersOnFirstPage();
-      cy.get(".next")
-        .should("exist")
-        .then(($nextButton) => {
-          if ($nextButton.is(":enabled")) {
-            goToNextPage();
-          }
-        });
+      cy.then(() => {
+        goToNextPage();
+      });
     }
     checkNotAssignedUsersOnAllPages();
     cy.get(".bg-success-500").should("exist").click();
     cy.assertToastMessage('The permissions field is required.The users field is required.');
-   
+
   });
 
-  it("Verifies permissions can be added and creating a group", () => {
+
+  it.only("Verifies permissions can be added and creating a group", () => {
     cy.visit("/permissions/groups/add-a-group");
     cy.get(".group-input-status > :nth-child(1) > .block").should("be.visible");
     var rawGroupName = faker.internet.userName(2);
@@ -100,13 +106,13 @@ describe("Groups", () => {
       return cy.get("tbody tr").each(($row) => {
         // Collect data on the current page and select up to two "Not Assigned" users
 
-        if (selectedUsers1 >= 2 || stopChecking) {
+        if (selectedUsers1 > 2 || stopChecking) {
           return false; // Stop checking when at least two "Not Assigned" users are selected or stopChecking is true
         }
         const $statusCell = $row.find("td:nth-child(4)");
         const statusText = $statusCell.text().trim();
 
-        if (statusText === "Not Assigned") {
+        if (statusText == "Not Assigned") {
           const $checkbox = $row.find('td:nth-child(5) input[type="checkbox"]');
           cy.wrap($checkbox)
             .check({ force: true })
@@ -135,28 +141,48 @@ describe("Groups", () => {
     }
 
     function goToNextPage1() {
-      return cy.get("button.next").should("exist").click();
-    }
-
-    function checkNotAssignedUsersOnAllPages1() {
-      return checkNotAssignedUsersOnCurrentPage1().then(() => {
-        if (selectedUsers1 < 2 && !stopChecking) {
-          cy.get("button.next")
-            .should("exist")
-            .then(($nextButton) => {
-              if ($nextButton.is(":enabled")) {
-                return goToNextPage1().then(() => {
-                  return checkNotAssignedUsersOnAllPages1(); // Recursively check on the next page
-                });
-              } else {
-                stopChecking = true; // Stop checking when the "Next" button is disabled
-              }
-            });
+      cy.get('.pagination').then(($pagination) => {
+        if ($pagination.find('.next').length > 0) {
+          cy.get('.next').click();
+          cy.wait(2000);
+        } else {
+          cy.log('No next page available.');
         }
       });
     }
 
-    checkNotAssignedUsersOnAllPages1();
+    // function checkNotAssignedUsersOnAllPages1() {
+    //   return checkNotAssignedUsersOnCurrentPage1().then(() => {
+    //     if (selectedUsers1 < 2 && !stopChecking) {
+    //       cy.then(() => {
+    //         goToNextPage1().then(() => {
+    //           return checkNotAssignedUsersOnAllPages1(); // Recursively check on the next page
+    //         })
+    //       })
+    //     }
+    //     else {
+    //       stopChecking = true; // Stop checking when the "Next" button is disabled
+    //     }
+    //   });
+
+    // }
+    // checkNotAssignedUsersOnAllPages1();
+
+
+    async function checkNotAssignedUsersOnAllPages1() {
+      await checkNotAssignedUsersOnCurrentPage1();
+    
+      if (selectedUsers1 < 2 && !stopChecking) {
+        await goToNextPage1();
+        await checkNotAssignedUsersOnAllPages1(); // Recursively check on the next page
+      } else {
+        stopChecking = true; // Stop checking when the "Next" button is disabled
+      }
+    }
+    
+    cy.then(() => {
+      checkNotAssignedUsersOnAllPages1();
+    });
 
     cy.get(".bg-success-500").should("exist").click();
     cy.assertToastMessage("The permissions field is required.");

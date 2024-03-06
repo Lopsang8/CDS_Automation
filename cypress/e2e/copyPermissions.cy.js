@@ -25,8 +25,8 @@ describe("Copy Functionality", () => {
     const randomPhoneNumber = Math.floor(
       10000000 + Math.random() * 90000000
     ).toString();
-    const userValidPhoneNumber = `05${randomPhoneNumber}`;
-    cy.get('[placeholder="04XX XXX XXX or 05XX XXX XXX"]').type(
+    const userValidPhoneNumber = `07${randomPhoneNumber}`;
+    cy.get('[placeholder="Phone Number"]').type(
       userValidPhoneNumber
     );
     var rawUsersName = faker.person.fullName();
@@ -39,7 +39,7 @@ describe("Copy Functionality", () => {
     const designation = designationsArray[randomDesignationIndex];
     cy.get('#designation').type(designation);
     cy.log("User's detail filled successfully")
-    cy.get('#headlessui-tabs-tab-\\:r2\\:').should('be.visible').click();
+    cy.get('#headlessui-tabs-tab-\\:r4\\:').should('be.visible').click();
     cy.get('.filter-wrap > .bg-danger-0').should('have.text', "Copy Permission ").click();
     cy.get('.filter-wrap > .undefined > .rounded').should("exist").click(); 
     cy.wait(3000);

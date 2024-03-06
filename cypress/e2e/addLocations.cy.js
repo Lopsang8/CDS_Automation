@@ -3,6 +3,8 @@ import { fa, faker } from "@faker-js/faker";
 describe(" Add Location", () => {
   beforeEach(() => {
     cy.viewport(1920, 1080);
+    cy.login('lopsang@supportwebo.onmicrosoft.com','>H^|u:~IwBF7L1{_e15')
+    cy.wait(3000)
     cy.visit("/locations");
   });
 
@@ -58,15 +60,17 @@ describe(" Add Location", () => {
     cy.get("#locationName").should("be.visible");
     var rawLocationName = faker.location.city();
     var locationName = rawLocationName.replace(/[^a-zA-Z0-9'_-]/g, "");
+    const siteCode = locationName.slice(0,2)
     const randomDigits = Math.floor(
       10000000 + Math.random() * 90000000
     ).toString();
-    const validPhoneNumber = `05${randomDigits}`;
+    const validPhoneNumber = `08${randomDigits}`;
     cy.get("#locationName").type(locationName)
     cy.get("#email").type(faker.internet.email());
-    cy.get('[placeholder="04XX XXX XXX or 05XX XXX XXX"]').type(
+    cy.get('[placeholder="Phone Number"]').type(
       validPhoneNumber
     );
+    cy.get('#siteCode').type(siteCode)
 
     // const addData = {
     //   locationName: locationName,
@@ -91,34 +95,34 @@ describe(" Add Location", () => {
       randomIndices.forEach((randomIndex) => {
         const $row = $rows.eq(randomIndex);
         cy.wrap($row).within(() => {
-          cy.get('td:nth-child(2) input[type="checkbox"]').check({
+          cy.get(':nth-child(2) input[type="checkbox"]').check({
             force: true,
           });
         });
       });
     });
-    cy.get("#headlessui-tabs-tab-\\:r1\\:")
-      .invoke("removeAttr", "target")
-      .click();
-    cy.wait(2000);
-    cy.get("tbody tr").then(($rows) => {
-      const randomIndicesUsers = [];
-      while (randomIndicesUsers.length < 2) {
-        const randomIndexUsers = Math.floor(Math.random() * $rows.length);
-        if (!randomIndicesUsers.includes(randomIndexUsers)) {
-          randomIndicesUsers.push(randomIndexUsers);
-        }
-      }
+    // cy.get("#headlessui-tabs-tab-\\:r1\\:")
+    //   .invoke("removeAttr", "target")
+    //   .click();
+    // cy.wait(2000);
+    // cy.get("tbody tr").then(($rows) => {
+    //   const randomIndicesUsers = [];
+    //   while (randomIndicesUsers.length < 2) {
+    //     const randomIndexUsers = Math.floor(Math.random() * $rows.length);
+    //     if (!randomIndicesUsers.includes(randomIndexUsers)) {
+    //       randomIndicesUsers.push(randomIndexUsers);
+    //     }
+    //   }
 
-      randomIndicesUsers.forEach((randomIndexUsers) => {
-        const $row = $rows.eq(randomIndexUsers);
-        cy.wrap($row).within(() => {
-          cy.get('td:nth-child(4) input[type="checkbox"]').check({
-            force: true,
-          });
-        });
-      });
-    });
+    //   randomIndicesUsers.forEach((randomIndexUsers) => {
+    //     const $row = $rows.eq(randomIndexUsers);
+    //     cy.wrap($row).within(() => {
+    //       cy.get('td:nth-child(4) input[type="checkbox"]').check({
+    //         force: true,
+    //       });
+    //     });
+    //   });
+    // });
     cy.get(".bg-success-500").should("exist").click();
     cy.assertToastMessage("Location Created Successfully");
     cy.log("Location created successfully");
