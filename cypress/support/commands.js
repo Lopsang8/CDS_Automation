@@ -7,6 +7,7 @@ Cypress.Commands.add("login", (email, password) => {
     args ,
     () => {
     cy.visit('https://dev-sellandparker.webo.dev/')
+    // cy.visit('https://stg-cds.webo.dev/')
     cy.wait(5000)
     
     // let enteredUsername;
@@ -71,6 +72,18 @@ Cypress.Commands.add("visitEditLocationPage", (id) => {
   Cypress.Commands.add("errorMessage", (expectedErrorMessage) => {
     cy.get(".error-message")
       .should("have.text", expectedErrorMessage);
+  })
+
+
+
+  Cypress.Commands.add("australianPhoneNumber", (phoneNumber) => {
+    const randomPhoneNumber = Math.floor(
+      10000000 + Math.random() * 90000000
+    ).toString();
+    const userValidPhoneNumber = `03${randomPhoneNumber}`;
+    cy.get('[placeholder="Phone Number"]').type(
+      userValidPhoneNumber
+    );
   })
 //
 //

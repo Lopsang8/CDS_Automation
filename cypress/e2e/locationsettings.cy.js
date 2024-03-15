@@ -3,12 +3,14 @@ describe("Location settings", () => {
 
   beforeEach(() => {
     cy.viewport(1920, 1080);
+    cy.login('lopsang@supportwebo.onmicrosoft.com', '>H^|u:~IwBF7L1{_e15')
+    cy.wait(3000)
     cy.visit("/locations");
     cy.get(":nth-child(1) > :nth-child(5) > .actions")
-      .should("be.visible")
-      .click();
-    cy.log("Location options are present");
-    cy.get(".absolute > :nth-child(2)").should("be.visible").click();
+      .contains("Settings")
+      .click({ force: true });
+      cy.log("Location options are present")
+    // cy.get(':nth-child(1) > :nth-child(5) > .actions > .fixed > :nth-child(2)').should("be.visible").click();
   });
 
 
@@ -19,28 +21,27 @@ describe("Location settings", () => {
     cy.log("Location settings form is present");
     cy.get(".text-neutral-600").should("have.text", "Local Settings");
     cy.log("Location settings form title is present");
-    cy.get("#eftpos_transaction_limit").click().clear();
-    cy.errorMessage(
-      " EFTPOS transcation limit must be a number"
+    cy.get("#eftpos_transaction_limit").click().type('adfsasd');
+    cy.errorMessage(' EFTPOS transaction limit must be a number *'
     );
-    cy.get("#eftpos_daily_machine_limit").click().clear();
+    cy.get("#eftpos_daily_machine_limit").click().type('adfsasd')
     cy.errorMessage(
-      " EFTPOS transcation limit must be a number EFTPOS daily machine limit must be a number"
+      ' EFTPOS daily machine limit must be a number greater than 0 *'
     );
-    cy.get("#cds_daily_cash_payment_limit").click().clear();
+    cy.get("#cds_daily_cash_payment_limit").click().type('adfsasd')
     cy.errorMessage(
-      " EFTPOS transcation limit must be a number EFTPOS daily machine limit must be a number CDS daily cash payment limit must be a number"
+      ' CDS daily cash payment limit must be a number greater than 0 *'
     );
-    cy.get("#cds_tag_transaction_limit").click().clear();
+    cy.get("#cds_tag_transaction_limit").click().type('adfsasd')
     cy.errorMessage(
-      " EFTPOS transcation limit must be a number EFTPOS daily machine limit must be a number CDS daily cash payment limit must be a number CDS tag transaction limit  must be a number"
+      ' CDS tag transaction limit  must be a number greater than 0 *'
     );
     cy.log("Prices/Limits form validation is verified");
   });
 
 
   it("Verifies Bank Details form validation", () => {
-    cy.get("#headlessui-tabs-tab-\\:r1\\:")
+    cy.get("#headlessui-tabs-tab-\\:r3\\:")
       .invoke("removeAttr", "target")
       .click();
     cy.log("Bank details tab is present and clicked");
@@ -72,5 +73,5 @@ describe("Location settings", () => {
 
   });
 
-  
+
 });

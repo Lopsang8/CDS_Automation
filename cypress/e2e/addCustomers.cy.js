@@ -1,11 +1,12 @@
 import { fa, faker } from "@faker-js/faker";
+
 describe("Customers", () => {
 
     beforeEach(() => {
         cy.viewports(1920, 1080);
-        cy.login('lopsang@supportwebo.onmicrosoft.com','>H^|u:~IwBF7L1{_e15')
+        cy.login('lopsang@supportwebo.onmicrosoft.com', '>H^|u:~IwBF7L1{_e15')
         cy.wait(3000)
-        cy.visit("/customers");
+        cy.visit('/customers')
     })
 
     it("Verifies customers list", () => {
@@ -22,12 +23,12 @@ describe("Customers", () => {
 
 
     it("Verifies that validation is present for individual and business customer", () => {
-        cy.get('.other-accessories > .gap-x-2').contains("Add A Customer").click();
+        cy.get('.other-accessories > .gap-x-2').contains("Add A Customer").click({});
         cy.get('.bottom-updates-field > .bg-primary-700').click();
         cy.get('#individual_customer_name')
         cy.errorMessage(
             " Name is required *"
-          );
+        );
         cy.get('#headlessui-tabs-tab-\\:rd\\:').click()
         cy.get('.bottom-updates-field > .bg-primary-700').click();
         cy.errorMessage(' ABN number must be 11 digits long * Business name is required * Business email is required *  Business number is required * Contact person name is required * Contact person email is required *  Contact person number is required *')
@@ -35,11 +36,44 @@ describe("Customers", () => {
     })
 
 
-    it.only("Verifies that individual customer can be added.", () => {
+    it("Verifies that individual customer can be added.", () => {
+        // cy.get('.cds-nav > :nth-child(2) > .w-full').click()
         cy.get('.other-accessories > .gap-x-2').contains("Add A Customer").click();
-        var individualCustomerName = faker.person.fullName;
+        cy.get('.py-6').should('be.visible')
+        var rawindividualCustomerName = faker.internet.userName(2);
+        var individualCustomerName = rawindividualCustomerName.replace(/[^a-zA-Z0-9'_-]/g, "");
         cy.get('#individual_customer_name').type(individualCustomerName)
+        const emailRandomNumber = Math.floor(Math.random() * 10000)
+        const individualEmail = 'lopsang.gole+' + emailRandomNumber + '@intuji.com'
+        cy.get('#individual_email').type(individualEmail)
+        cy.get('.chooseOptions > :nth-child(2)').click()
+        cy.get('.bottom-updates-field > .bg-primary-700').click()
+        cy.get('.bottom-updates-field > :nth-child(2)').click()
+        cy.get('.chooseOptions > :nth-child(2)').click()
+        cy.get('.bottom-updates-field > .bg-success-500').click()
+        cy.assertToastMessage("Successfully created a new customer")
     })
-     
-        
+
+
+    it.only("Verifies that business customer can be added", () => {
+        cy.get('.other-accessories > .gap-x-2').contains("Add A Customer").click();
+        cy.get('#headlessui-tabs-tab-\\:rd\\:').click()    //goes to the business tab
+        cy.get('.py-6').should('be.visible')      //checks the visibility of business form
+        cy.get('.gap-10 > div > .relative').click()        //check the ABN later checkbox
+        var rawBusinessName = faker.company.name();
+        var businessName = rawBusinessName.replace(/[^a-zA-Z0-9'_-]/g, "");
+        cy.get('#business_name').type(businessName)
+        const busiEmailRandomNumber = Math.floor(Math.random() * 10000)
+        const businessEmail = 'lopsang.gole+busi' + busiEmailRandomNumber + '@intuji.com'
+        cy.get('#business_email').type(businessEmail)
+        cy.get(':nth-child(5) > .react-tel-input > .form-control')
+        cy.get('#business_contact_person_name')
+        cy.get('#business_contact_person_email')
+        cy.get(':nth-child(8) > .react-tel-input > .form-control')
+        cy.get('.chooseOptions > :nth-child(2)')
+        cy.get('.bottom-updates-field > .bg-primary-700')
+
+    })
+
+
 })
