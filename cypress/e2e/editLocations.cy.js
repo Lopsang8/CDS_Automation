@@ -1,38 +1,32 @@
-// import { addData } from "./addLocations.cy";
-
+// import { locationName, locationEmail, validPhoneNumber, siteCode } from '../support/shared';
+import '../support/commands';
 
 describe("Edit Location", () => {
 
 
     before(() => {
-      cy.viewport(1920, 1080);
+      cy.generateAndStoreValues();
       cy.login('lopsang@supportwebo.onmicrosoft.com','>H^|u:~IwBF7L1{_e15')
       cy.wait(3000)
       cy.visit("/locations");
       cy.get(":nth-child(1) > :nth-child(5) > .actions")
-        .should("be.visible")
-        .click();
-        // cy.get('.actions > .fixed > :nth-child(1)')
-        // cy.get('.cursor-pointer.bg-danger-0')
-        cy.get(':nth-child(1) > :nth-child(5) > .actions > .fixed > :nth-child(1)')
-        .should("be.visible").click();
+      .contains("Edit")
+      .click({ force: true });
     });  
 
 
 
-    it("Verifies edit location form validation", () => {
-        cy.get('.text-2xl').should("have.text", "Edit A Location");
-        cy.get("#locationName").should("be.visible");
-        // cy.get('@addedLocationName').invoke('').should('eq', this.locationName);
-        // cy.get("@addedEmail").invoke('').should('eq', this.email);
-        // cy.get("@addedPhone").invoke('').should('eq', this.phone);
-        // cy.get('#location-name-input').invoke('val').should('eq', this.locationName);
-
-
-
-    });
-
-
+    it('Verifies edit location form validation', () => {
+        cy.get('.text-2xl').should('have.text', 'Edit A Location');
+        cy.get('#locationName').should('be.visible');
+    
+        cy.log(cy.state('locationName'), cy.state('locationEmail'), cy.state('validPhoneNumber'), cy.state('siteCode'));
+    
+        cy.get('#locationName').should('exist').invoke('val').should('eq', cy.state('locationName'));
+        cy.get('#email').should('exist').invoke('val').should('eq', cy.state('locationEmail'));
+        cy.get('[placeholder="Phone Number"]').should('exist').invoke('val').should('eq', cy.state('validPhoneNumber'));
+        cy.get('#siteCode').should('exist').invoke('val').should('eq', cy.state('siteCode'));
+      });
 
 
 });  

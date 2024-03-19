@@ -75,16 +75,32 @@ Cypress.Commands.add("visitEditLocationPage", (id) => {
   })
 
 
+  const phoneCodes = ['02', '03', '04', '07', '08']
+  Cypress.Commands.add("australianPhoneNumber", () => {
+    phoneCodes.forEach(code => {
+      const randomPhoneNumber = Math.floor(
+        10000000 + Math.random() * 90000000
+      ).toString();
+      const userValidPhoneNumber = code + randomPhoneNumber;
+      cy.get('[placeholder="Phone Number"]').type(
+        userValidPhoneNumber
+      );
 
-  Cypress.Commands.add("australianPhoneNumber", (phoneNumber) => {
-    const randomPhoneNumber = Math.floor(
-      10000000 + Math.random() * 90000000
-    ).toString();
-    const userValidPhoneNumber = `03${randomPhoneNumber}`;
-    cy.get('[placeholder="Phone Number"]').type(
-      userValidPhoneNumber
-    );
+    })
+    
   })
+
+
+
+import { generateValues, locationName, locationEmail, validPhoneNumber, siteCode } from './shared';
+
+Cypress.Commands.add('generateAndStoreValues', () => {
+  generateValues();
+  cy.state('locationName', locationName);
+  cy.state('locationEmail', locationEmail);
+  cy.state('validPhoneNumber', validPhoneNumber);
+  cy.state('siteCode', siteCode);
+});
 //
 //
 // -- This is a child command --
@@ -97,19 +113,3 @@ Cypress.Commands.add("visitEditLocationPage", (id) => {
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-// Cypress.Commands.add('generateFixture', () => {
-//     const faker = require('@faker-js/faker')
-
-//     cy.writeFile('cypress/fixtures/stories.json', {
-//       'hits':Cypress._.times(20, () => {
-//         return {
-//           'title':`${faker.lorem.words(3)}`,
-//           'url':`${faker.internet.url()}`,
-//           'author':`${faker.name.firstName()} ${faker.name.lastName()}`,
-//           'num_comments':`${faker.datatype.number()}`,
-//           'points':`${faker.datatype.number()}`,
-//           'objectID':`${faker.datatype.uuid()}`,
-//         }
-//       })
-//     })
-//   })

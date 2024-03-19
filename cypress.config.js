@@ -1,18 +1,17 @@
 const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
-
-  // hosts: {
-  //   'auth.corp.com': '127.0.0.1',
-  // },
   fixturesFolder: false,
+  env: {
+    FOO: 'bar',
+  },
 
   e2e: 
   {
     baseUrl: "https://dev-sellandparker.webo.dev/",
     // baseUrl: "https://stg-cds.webo.dev/",
-    // experimentalStudio: true,
-    experimentalSessionAndOrigin: true,
+    viewportHeight: 1080,
+    viewportWidth: 1920,
     defaultCommandTimeout: 7000,
     experimentalModifyObstructiveThirdPartyCode: true,
     chromeWebSecurity: true,

@@ -2,7 +2,6 @@ describe("Location settings", () => {
 
 
   beforeEach(() => {
-    cy.viewport(1920, 1080);
     cy.login('lopsang@supportwebo.onmicrosoft.com', '>H^|u:~IwBF7L1{_e15')
     cy.wait(3000)
     cy.visit("/locations");
@@ -12,6 +11,25 @@ describe("Location settings", () => {
       cy.log("Location options are present")
     // cy.get(':nth-child(1) > :nth-child(5) > .actions > .fixed > :nth-child(2)').should("be.visible").click();
   });
+
+
+
+  it("Verifies that location settings can be added", () => {
+    cy.get(".location-setting-price > .bg-danger-0").should("be.visible");
+    cy.get(".text-neutral-600").should("have.text", "Local Settings");
+    cy.get("#headlessui-tabs-tab-\\:r3\\:")
+      .invoke("removeAttr", "target")
+      .click();
+    cy.log("Bank details tab is present and clicked");
+    cy.get('#bank_code').type('WBC')
+    cy.get('#bank_user_name').type('Sell and Parker Pty. Ltd.')
+    cy.get('#bank_user_number').type('89886')
+    cy.get('#bank_file_sequence').type('2')
+    cy.get('#bank_account_bsb').type('032010')
+    cy.get('#bank_account_number').type('820455')
+    cy.get('.bg-success-500').click()
+    cy.assertToastMessage("Location settings updated successfully")
+  })
 
 
 

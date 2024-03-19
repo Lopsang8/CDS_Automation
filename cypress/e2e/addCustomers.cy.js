@@ -3,7 +3,6 @@ import { fa, faker } from "@faker-js/faker";
 describe("Customers", () => {
 
     beforeEach(() => {
-        cy.viewports(1920, 1080);
         cy.login('lopsang@supportwebo.onmicrosoft.com', '>H^|u:~IwBF7L1{_e15')
         cy.wait(3000)
         cy.visit('/customers')
@@ -31,7 +30,8 @@ describe("Customers", () => {
         );
         cy.get('#headlessui-tabs-tab-\\:rd\\:').click()
         cy.get('.bottom-updates-field > .bg-primary-700').click();
-        cy.errorMessage(' ABN number must be 11 digits long * Business name is required * Business email is required *  Business number is required * Contact person name is required * Contact person email is required *  Contact person number is required *')
+        cy.errorMessage
+            (' ABN number must be 11 digits long * Business name is required * Business email is required *  Business number is required * Contact person name is required * Contact person email is required *  Contact person number is required *')
         cy.log('All required validations for business customer is in place.')
     })
 
@@ -66,14 +66,23 @@ describe("Customers", () => {
         const busiEmailRandomNumber = Math.floor(Math.random() * 10000)
         const businessEmail = 'lopsang.gole+busi' + busiEmailRandomNumber + '@intuji.com'
         cy.get('#business_email').type(businessEmail)
-        cy.get(':nth-child(5) > .react-tel-input > .form-control')
-        cy.get('#business_contact_person_name')
-        cy.get('#business_contact_person_email')
-        cy.get(':nth-child(8) > .react-tel-input > .form-control')
-        cy.get('.chooseOptions > :nth-child(2)')
-        cy.get('.bottom-updates-field > .bg-primary-700')
-
+        const randomBusinessPhoneNumber = Math.floor(
+            10000000 + Math.random() * 90000000
+        ).toString();
+        const businessValidPhoneNumber = `07${randomBusinessPhoneNumber}`;
+        cy.get(':nth-child(5) > .react-tel-input > .form-control').type(businessValidPhoneNumber)
+        var rawBusinessContactPersonName = faker.person.fullName();
+        var businessContactPersonName = rawBusinessContactPersonName.replace(/[^a-zA-Z0-9'_-]/g, "");
+        cy.get('#business_contact_person_name').type(businessContactPersonName)
+        var contactPersonEmail = faker.internet.email();
+        cy.get('#business_contact_person_email').type(contactPersonEmail)
+        cy.get(':nth-child(8) > .react-tel-input > .form-control').type(businessValidPhoneNumber)
+        cy.get('.chooseOptions > :nth-child(2)').click()
+        cy.get('.bottom-updates-field > .bg-primary-700').click()
+        cy.get('.bottom-updates-field > :nth-child(2)').click()
+        cy.get('.chooseOptions > :nth-child(2)').click()
+        cy.get('.bottom-updates-field > .bg-success-500').click()
+        cy.assertToastMessage("Successfully created a new customer")
     })
-
 
 })

@@ -1,8 +1,8 @@
 import { fa, faker } from "@faker-js/faker";
+import { generateValues, locationEmail, locationName, siteCode, validPhoneNumber } from '../support/shared';
 
 describe(" Add Location", () => {
   beforeEach(() => {
-    cy.viewport(1920, 1080);
     cy.login('lopsang@supportwebo.onmicrosoft.com','>H^|u:~IwBF7L1{_e15')
     cy.wait(3000)
     cy.visit("/locations");
@@ -54,29 +54,18 @@ describe(" Add Location", () => {
 
 
 
-
-  it("Verifies creating a Location", () => {
+  it.only("Verifies creating a Location", () => {
+    generateValues();
     cy.get("button.bg-primary-700").contains("Add A Location").click();
     cy.get("#locationName").should("be.visible");
-    var rawLocationName = faker.location.city();
-    var locationName = rawLocationName.replace(/[^a-zA-Z0-9'_-]/g, "");
-    const siteCode = locationName.slice(0,2)
-    const randomDigits = Math.floor(
-      10000000 + Math.random() * 90000000
-    ).toString();
-    const validPhoneNumber = `08${randomDigits}`;
     cy.get("#locationName").type(locationName)
-    cy.get("#email").type(faker.internet.email());
-    cy.get('[placeholder="Phone Number"]').type(
-      validPhoneNumber
-    );
+    cy.get("#email").type(locationEmail);
+    cy.get('[placeholder="Phone Number"]').type(validPhoneNumber);
     cy.get('#siteCode').type(siteCode)
 
-    // const addData = {
-    //   locationName: locationName,
-    //   email: faker.internet.email(),
-    //   phone: validPhoneNumber
-    // };
+    
+    cy.log(locationName, locationEmail, validPhoneNumber, siteCode)
+
     cy.get(".add-locations > :nth-child(1) > :nth-child(2)").should(
       "be.visible"
     );
@@ -127,6 +116,11 @@ describe(" Add Location", () => {
     cy.assertToastMessage("Location Created Successfully");
     cy.log("Location created successfully");
   });
+
+
+  // after(() => {
+  //   cy.exec('npm run test:edit',  { failOnNonZeroExit: false })
+  // })
 
 
 });

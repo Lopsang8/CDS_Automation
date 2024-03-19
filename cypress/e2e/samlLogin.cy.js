@@ -2,7 +2,6 @@
 
 describe("Login", () => {
     beforeEach(() => {
-        cy.viewport(1920,1080)
         cy.visit('/')
         cy.login('lopsang@supportwebo.onmicrosoft.com','>H^|u:~IwBF7L1{_e15')
         

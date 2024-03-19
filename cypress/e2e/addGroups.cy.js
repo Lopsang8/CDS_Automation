@@ -2,7 +2,6 @@ import { fa, faker } from "@faker-js/faker";
 
 describe("Groups", () => {
   beforeEach(() => {
-    cy.viewports(1920, 1080);
     cy.login('lopsang@supportwebo.onmicrosoft.com', '>H^|u:~IwBF7L1{_e15')
     cy.wait(3000)
     cy.visit("/permissions/groups");
@@ -91,7 +90,7 @@ describe("Groups", () => {
   });
 
 
-  it.only("Verifies permissions can be added and creating a group", () => {
+  it("Verifies permissions can be added and creating a group", () => {
     cy.visit("/permissions/groups/add-a-group");
     cy.get(".group-input-status > :nth-child(1) > .block").should("be.visible");
     var rawGroupName = faker.internet.userName(2);
@@ -173,7 +172,7 @@ describe("Groups", () => {
       await checkNotAssignedUsersOnCurrentPage1();
     
       if (selectedUsers1 < 2 && !stopChecking) {
-        await goToNextPage1();
+        goToNextPage1();
         await checkNotAssignedUsersOnAllPages1(); // Recursively check on the next page
       } else {
         stopChecking = true; // Stop checking when the "Next" button is disabled

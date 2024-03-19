@@ -10,7 +10,6 @@ describe('Pagination and show items', () => {
 
 
     it('should interact with pagination and show items dropdown', () => {
-        cy.viewport(1920, 1080);
         cy.login('lopsang@supportwebo.onmicrosoft.com', '>H^|u:~IwBF7L1{_e15')
         cy.wait(3000)
         cy.visit(allRoutes[0]);
