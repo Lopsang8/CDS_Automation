@@ -1,5 +1,5 @@
 import { fa, faker } from "@faker-js/faker";
-import { generateValues, locationEmail, locationName, siteCode, validPhoneNumber } from '../support/shared';
+import { generateValues, locationEmail, locationName, siteCode, validPhoneNumber } from '../../support/shared';
 
 describe(" Add Location", () => {
   beforeEach(() => {
@@ -54,7 +54,7 @@ describe(" Add Location", () => {
 
 
 
-  it.only("Verifies creating a Location", () => {
+  it("Verifies creating a Location", () => {
     generateValues();
     cy.get("button.bg-primary-700").contains("Add A Location").click();
     cy.get("#locationName").should("be.visible");

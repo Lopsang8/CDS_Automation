@@ -1,5 +1,5 @@
 // import { locationName, locationEmail, validPhoneNumber, siteCode } from '../support/shared';
-import '../support/commands';
+import '../../support/commands';
 
 describe("Edit Location", () => {
 

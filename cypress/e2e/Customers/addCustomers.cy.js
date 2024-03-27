@@ -55,7 +55,7 @@ describe("Customers", () => {
     })
 
 
-    it.only("Verifies that business customer can be added", () => {
+    it("Verifies that business customer can be added", () => {
         cy.get('.other-accessories > .gap-x-2').contains("Add A Customer").click();
         cy.get('#headlessui-tabs-tab-\\:rd\\:').click()    //goes to the business tab
         cy.get('.py-6').should('be.visible')      //checks the visibility of business form
