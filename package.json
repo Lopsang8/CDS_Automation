@@ -21,6 +21,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@cypress/code-coverage": "^3.12.34",
     "@faker-js/faker": "^8.0.2",
     "cypress": "^13.7.0",
     "cypress-file-upload": "^5.0.8",

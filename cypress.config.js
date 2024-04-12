@@ -1,6 +1,7 @@
 const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
+  projectId: '71q7iv',
   fixturesFolder: false,
   env: {
     FOO: 'bar',
