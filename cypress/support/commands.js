@@ -22,6 +22,7 @@ Cypress.Commands.add("login", (email, password) => {
     cy.get('#idSIButton9').click()
     cy.get('#i0118').type(password)
     cy.get('#idSIButton9').click();
+    // cy.authenticateWithCode();
     cy.get('#idSIButton9').click();
     
     });
@@ -33,6 +34,30 @@ Cypress.Commands.add("login", (email, password) => {
   
 
 });
+
+
+
+// // Authenticator code custom command
+// const authenticatorCode = '954698'; 
+
+// Cypress.Commands.add('authenticateWithCode', () => {
+//   cy.once('window:rendered', () => {
+//     cy.window().then((win) => {
+//       const body = win.document.body;
+//       const inputField = win.document.querySelector('input[type="text"]');
+//       if (inputField) {
+//         inputField.value = authenticatorCode;
+//         inputField.dispatchEvent(new Event('input', { bubbles: true }));
+//         const submitButton = win.document.querySelector('button[type="submit"]');
+//         if (submitButton) {
+//           submitButton.click();
+//         }
+//       } else {
+//         cy.log('Authenticator code input field not found');
+//       }
+//     });
+//   });
+// });
 
 
 

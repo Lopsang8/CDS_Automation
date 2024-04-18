@@ -41,8 +41,8 @@ describe("Groups", () => {
   it("Verifies permissions are required validation and redirecting to Permissions tab", () => {
     cy.visit("/permissions/groups/add-a-group");
     cy.get(".group-input-status > :nth-child(1) > .block").should("be.visible");
-    var rawGroupName = faker.internet.userName(2);
-    var groupName = rawGroupName.replace(/[^a-zA-Z0-9'_-]/g, "");
+    const rawGroupName = faker.internet.userName(2);
+    const groupName = rawGroupName.replace(/[^a-zA-Z0-9'_-]/g, "");
     cy.get('[aria-label="Group Name"]').type(groupName);
     cy.get(".add-group-section").should("exist");
 
@@ -90,56 +90,50 @@ describe("Groups", () => {
   });
 
 
-  it("Verifies permissions can be added and creating a group", () => {
+  it.only("Verifies permissions can be added and creating a group", () => {
     cy.visit("/permissions/groups/add-a-group");
     cy.get(".group-input-status > :nth-child(1) > .block").should("be.visible");
-    var rawGroupName = faker.internet.userName(2);
-    var groupName = rawGroupName.replace(/[^a-zA-Z0-9'_-]/g, "");
+    const rawGroupName = faker.internet.userName(2);
+    const groupName = rawGroupName.replace(/[^a-zA-Z0-9'_-]/g, "");
+
     cy.get('[aria-label="Group Name"]').type(groupName);
     cy.get(".add-group-section").should("exist"); //add group section
 
-    let selectedUsers1 = 0; // Counter for selected users
-    let stopChecking = false; // Flag to stop further checking
+    const MAX_RECURSION_DEPTH = 6; // Maximum recursion depth
+    let selectedUsers = 0; // Counter for selected users
+    let currentRecursionDepth = 0; // Current recursion depth
 
-    function checkNotAssignedUsersOnCurrentPage1() {
-      return cy.get("tbody tr").each(($row) => {
-        // Collect data on the current page and select up to two "Not Assigned" users
+    const findNotAssignedUsers = () => {
+      cy.get('thead th')
+        .contains('Status')
+        .then(($statusHeader) => {
+          const statusColumnIndex = $statusHeader.index() + 1;
 
-        if (selectedUsers1 > 2 || stopChecking) {
-          return false; // Stop checking when at least two "Not Assigned" users are selected or stopChecking is true
-        }
-        const $statusCell = $row.find("td:nth-child(4)");
-        const statusText = $statusCell.text().trim();
+          cy.get("tbody tr").each(($row) => {
+            // Stop checking when at least two "Not Assigned" users are selected
+            if (selectedUsers >= 2) {
+              return false;
+            }
 
-        if (statusText == "Not Assigned") {
-          const $checkbox = $row.find('td:nth-child(5) input[type="checkbox"]');
-          cy.wrap($checkbox)
-            .check({ force: true })
-            .then(() => {
-              selectedUsers1++;
-            });
-        }
+            const $statusCell = $row.find(`td:nth-child(${statusColumnIndex})`);
+            cy.wrap($statusCell)
+              .invoke('text')
+              .then((statusText) => {
+                const isNotAssigned = statusText.trim() === 'Not Assigned';
+                if (isNotAssigned) {
+                  const $checkbox = $row.find('td:nth-child(5) input[type="checkbox"]');
+                  cy.wrap($checkbox)
+                    .check({ force: true })
+                    .then(() => {
+                      selectedUsers++;
+                    });
+                }
+              });
+          });
+        });
+    };
 
-        // cy.wrap($row).within(() => {
-        //   return cy.get("td:nth-child(4)").then(($statusCell) => {
-        //     const statusText = $statusCell.text().trim();
-
-        //     if (statusText === "Not Assigned") {
-        //       cy.get('td:nth-child(5) input[type="checkbox"]')
-        //         .check({
-        //           force: true,
-        //         })
-        //         .then(() => {
-        //           // cy.wrap($checkbox).check({ force: true });
-        //           selectedUsers1++;
-        //         });
-        //     }
-        //   });
-        // });
-      });
-    }
-
-    function goToNextPage1() {
+    const goToNextPage = () => {
       cy.get('.pagination').then(($pagination) => {
         if ($pagination.find('.next').length > 0) {
           cy.get('.next').click();
@@ -148,40 +142,21 @@ describe("Groups", () => {
           cy.log('No next page available.');
         }
       });
-    }
+    };
 
-    // function checkNotAssignedUsersOnAllPages1() {
-    //   return checkNotAssignedUsersOnCurrentPage1().then(() => {
-    //     if (selectedUsers1 < 2 && !stopChecking) {
-    //       cy.then(() => {
-    //         goToNextPage1().then(() => {
-    //           return checkNotAssignedUsersOnAllPages1(); // Recursively check on the next page
-    //         })
-    //       })
-    //     }
-    //     else {
-    //       stopChecking = true; // Stop checking when the "Next" button is disabled
-    //     }
-    //   });
+    const checkNotAssignedUsers = () => {
+      findNotAssignedUsers();
 
-    // }
-    // checkNotAssignedUsersOnAllPages1();
-
-
-    async function checkNotAssignedUsersOnAllPages1() {
-      await checkNotAssignedUsersOnCurrentPage1();
-    
-      if (selectedUsers1 < 2 && !stopChecking) {
-        goToNextPage1();
-        await checkNotAssignedUsersOnAllPages1(); // Recursively check on the next page
+      if (selectedUsers < 2 && currentRecursionDepth < MAX_RECURSION_DEPTH) {
+        currentRecursionDepth++;
+        goToNextPage();
+        checkNotAssignedUsers(); // Recursively check on the next page
       } else {
-        stopChecking = true; // Stop checking when the "Next" button is disabled
+        cy.log('Maximum recursion depth reached or 2 users selected.');
       }
-    }
-    
-    cy.then(() => {
-      checkNotAssignedUsersOnAllPages1();
-    });
+    };
+
+    checkNotAssignedUsers();
 
     cy.get(".bg-success-500").should("exist").click();
     cy.assertToastMessage("The permissions field is required.");
@@ -203,5 +178,8 @@ describe("Groups", () => {
     cy.wait(1000);
     cy.get(".bg-success-500").should("exist").click();
     cy.assertToastMessage("Group Created Successfully");
-  });
-});
+  })
+})
+
+
+
