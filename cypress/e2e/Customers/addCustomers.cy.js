@@ -51,6 +51,7 @@ describe("Customers", () => {
         cy.get('.bottom-updates-field > :nth-child(2)').click()
         cy.get('.chooseOptions > :nth-child(2)').click()
         cy.get('.bottom-updates-field > .bg-success-500').click()
+        cy.wait(3000)
         cy.waitUntil(() =>
             cy.assertToastMessage("Successfully created a new customer")
         )
@@ -84,6 +85,7 @@ describe("Customers", () => {
         cy.get('.bottom-updates-field > :nth-child(2)').click()
         cy.get('.chooseOptions > :nth-child(2)').click()
         cy.get('.bottom-updates-field > .bg-success-500').click()
+        cy.wait(3000)
         cy.waitUntil(() =>
             cy.assertToastMessage("Successfully created a new customer")
         )

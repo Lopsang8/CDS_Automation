@@ -21,12 +21,12 @@ describe("Location settings", () => {
       .invoke("removeAttr", "target")
       .click();
     cy.log("Bank details tab is present and clicked");
-    cy.get('#bank_code').type('WBC')
-    cy.get('#bank_user_name').type('Sell and Parker Pty. Ltd.')
-    cy.get('#bank_user_number').type('89886')
-    cy.get('#bank_file_sequence').type('2')
-    cy.get('#bank_account_bsb').type('032010')
-    cy.get('#bank_account_number').type('820455')
+    cy.get('#bank_code').clear().type('WBC')
+    cy.get('#bank_user_name').clear().type('Sell and Parker Pty. Ltd.')
+    cy.get('#bank_user_number').clear().type('89886')
+    cy.get('#bank_file_sequence').clear().type('2')
+    cy.get('#bank_account_bsb').clear().type('032010')
+    cy.get('#bank_account_number').clear().type('820455')
     cy.get('.bg-success-500').click()
     cy.assertToastMessage("Location settings updated successfully")
   })
