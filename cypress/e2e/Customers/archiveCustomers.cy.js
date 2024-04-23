@@ -7,6 +7,7 @@ describe("Archive Customers", () => {
     })
 
     it("Verifies that customers can be archived", () => {
+        cy.wait(3000)
         cy.get(":nth-child(1) > .text-center > .actions")
             .contains("Archive")
             .click({ force: true });
@@ -18,7 +19,7 @@ describe("Archive Customers", () => {
                     cy.get('#headlessui-dialog-panel-\\\\:').invoke('attr', 'id')
                         .then((id) => {
                             const dynamicId = id.split(':')[2]; // Assuming the dynamic part is the third part of the ID
-                            cy.get(`#headlessui-dialog-panel-\\:${dynamicId}\\:`); // Use the dynamic ID in the locator
+                            cy.get(`#headlessui-dialog-panel-\\:${dynamicId}\\:`); // Using the dynamic ID in the locator
                         });
                 }
 

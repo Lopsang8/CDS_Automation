@@ -18,6 +18,7 @@ describe('Pagination and show items', () => {
             cy.get('.border-r-neutral-400 > :nth-child(5)').click({ force: true })
             cy.get('.pagination').scrollIntoView()
             // cy.get('button.next').click()
+            cy.wait(3000)
             cy.get('button.next').then($nextButton => {
                 if ($nextButton.length > 0) {
                     // Next button is present, click it
