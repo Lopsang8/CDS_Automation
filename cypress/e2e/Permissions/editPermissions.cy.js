@@ -1,7 +1,9 @@
 describe("Permissions", () => {
   beforeEach(() => {
-    cy.login('lopsang@supportwebo.onmicrosoft.com', '>H^|u:~IwBF7L1{_e15')
-    cy.wait(3000)
+    cy.login('')
+    cy.wait(2000)
+    cy.UpdateRefreshButton()
+    cy.wait(2000)
     cy.visit("/permissions/groups");
     cy.get("#headlessui-tabs-tab-\\:r3\\:")
       .invoke("removeAttr", "target")

@@ -7,10 +7,12 @@ let validPhoneNumber;
 let siteCode;
 
 export const generateValues = () => {
-  locationName = getLocationName();
-  locationEmail = getLocationEmail();
-  validPhoneNumber = getValidPhoneNumber();
-  siteCode = getSiteCode(locationName);
+  if (!locationName) {
+    locationName = getLocationName();
+    locationEmail = getLocationEmail();
+    validPhoneNumber = getValidPhoneNumber();
+    siteCode = getSiteCode(locationName);
+  }
 };
 
 const getLocationName = () => {

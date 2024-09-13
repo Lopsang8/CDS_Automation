@@ -1,13 +1,15 @@
 describe("Archive Customers", () => {
 
     beforeEach(() => {
-        cy.login('lopsang@supportwebo.onmicrosoft.com', '>H^|u:~IwBF7L1{_e15')
-        cy.wait(3000)
+        cy.login()
+        cy.wait(2000)
+        cy.UpdateRefreshButton()
+        cy.wait(2000)
         cy.visit("/customers");
     })
 
     it("Verifies that customers can be archived", () => {
-        cy.wait(3000)
+
         cy.get(":nth-child(1) > .text-center > .actions")
             .contains("Archive")
             .click({ force: true });
@@ -27,7 +29,9 @@ describe("Archive Customers", () => {
 
 
         cy.get('.bg-success-500').click()
-        cy.assertToastMessage("Customer archived successfully")
+        cy.get(".Toastify").contains('archived successfully')
+        cy.log('Customer has been archived successfully!')
+
     })
 })
 

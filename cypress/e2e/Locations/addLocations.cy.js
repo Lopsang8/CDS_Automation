@@ -1,10 +1,14 @@
-import { fa, faker } from "@faker-js/faker";
 import { generateValues, locationEmail, locationName, siteCode, validPhoneNumber } from '../../support/shared';
+// import '../../support/commands';
+// import { generateValues } from '../../support/shared';
+
 
 describe(" Add Location", () => {
   beforeEach(() => {
-    cy.login('lopsang@supportwebo.onmicrosoft.com','>H^|u:~IwBF7L1{_e15')
-    cy.wait(3000)
+    cy.login('')
+    cy.wait(2000)
+    cy.UpdateRefreshButton()
+    cy.wait(2000)
     cy.visit("/locations");
   });
 
@@ -52,10 +56,12 @@ describe(" Add Location", () => {
     cy.get(".bg-success-500").should("exist").click();
   });
 
+  before(() => {
+    generateValues();
 
+  })
 
   it("Verifies creating a Location", () => {
-    generateValues();
     cy.get("button.bg-primary-700").contains("Add A Location").click();
     cy.get("#locationName").should("be.visible");
     cy.get("#locationName").type(locationName)
@@ -63,7 +69,7 @@ describe(" Add Location", () => {
     cy.get('[placeholder="Phone Number"]').type(validPhoneNumber);
     cy.get('#siteCode').type(siteCode)
 
-    
+
     cy.log(locationName, locationEmail, validPhoneNumber, siteCode)
 
     cy.get(".add-locations > :nth-child(1) > :nth-child(2)").should(

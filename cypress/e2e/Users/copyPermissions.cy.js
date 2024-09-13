@@ -4,10 +4,12 @@ describe("Copy Functionality", () => {
 
 
   beforeEach(() => {
-    cy.login('lopsang@supportwebo.onmicrosoft.com','>H^|u:~IwBF7L1{_e15')
-    cy.wait(3000)
+    cy.login()
+    cy.wait(2000)
+    cy.UpdateRefreshButton()
+    cy.wait(2000) 
     cy.visit("/users");
-    cy.get(".other-accessories > .gap-x-2").should("be.visible").click();
+    cy.get('div.other-accessories button').should("be.visible").click();
   });
 
 
@@ -39,7 +41,7 @@ describe("Copy Functionality", () => {
     cy.get('#designation').type(designation);
     cy.log("User's detail filled successfully")
     cy.get('#headlessui-tabs-tab-\\:r4\\:').should('be.visible').click();
-    cy.get('.filter-wrap > .bg-danger-0').should('have.text', "Copy Permission ").click();
+    cy.contains('button', 'Copy Permission').should('have.text', "Copy Permission ").click();
     cy.get('.filter-wrap > .undefined > .rounded').should("exist").click(); 
     cy.wait(3000);
     const copyUserDropdown = cy.get('.userCopyPremissionSearch')
@@ -51,7 +53,7 @@ describe("Copy Functionality", () => {
         // cy.wrap(selectedOption).should('be.checked');
     })
     cy.wait(4000);
-    cy.get(':nth-child(2) > .filter-wrap > .gap-x-2').should("exist").click();
+    cy.contains('button', 'Copy').should("exist").click();
     cy.get(".bg-success-500").should("exist").click();
     cy.get('.pemission-details').should("be.visible");
     cy.assertToastMessage("User Added Successfully");

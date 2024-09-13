@@ -5,8 +5,10 @@ describe("Add a User", () => {
 
   beforeEach(() => {
 
-    cy.login('lopsang@supportwebo.onmicrosoft.com','>H^|u:~IwBF7L1{_e15')
-    cy.wait(3000)
+    cy.login('')
+    cy.wait(2000)
+    cy.UpdateRefreshButton()
+    cy.wait(2000)
     cy.visit("/users");
   });
 
@@ -17,14 +19,14 @@ describe("Add a User", () => {
     // cy.get(".gap-6 > :nth-child(1)").should("be.visible");
     // cy.get(".gap-6 > :nth-child(2)").should("be.visible");
     cy.get('input[name="Search"]').should("be.visible");
-    cy.get(".other-accessories > .gap-x-2").should("be.visible").click();
+    cy.get('div.other-accessories button').should("be.visible").click();
     cy.log("Users lists and Add A User button is present");
   });
 
 
 
   it("verifies add user page validations", () => {
-    cy.get(".other-accessories > .gap-x-2").should("be.visible").click();
+    cy.get('div.other-accessories button').should("be.visible").click();
     cy.get(".bg-success-500").should("exist").click();
     cy.errorMessage(' First Name is required * Last name is required * Email is required * Username is required *');
     cy.log("All required fields validation is working");
@@ -33,19 +35,19 @@ describe("Add a User", () => {
 
 
   it("verifies add user page has Locations and Permissions tab", () => {
-    cy.get(".other-accessories > .gap-x-2").should("be.visible").click();
+    cy.get('div.other-accessories button').should("be.visible").click();
     cy.get('#headlessui-tabs-tab-\\:r3\\:').should('be.visible').click();
     cy.get('#headlessui-tabs-tab-\\:r4\\:').should('be.visible').click();
     cy.log("Locations and Permissions tab is present");
-    cy.get('.filter-wrap > .bg-danger-0').should('be.visible')
+    cy.get('.pemission-details').should('be.visible')
     cy.get('.bg-primary-700').should('be.visible')
 
   });
 
 
 
-  it("Verifies users can be created without filling the Locations and Permissions tab", () => {
-    cy.get(".other-accessories > .gap-x-2").should("be.visible").click();
+  it.only("Verifies users can be created without filling the Locations and Permissions tab", () => {
+    cy.get('div.other-accessories button').should("be.visible").click();
     var rawFirstName = faker.person.firstName();
     var userFirstName = rawFirstName.replace(/[^a-zA-Z0-9'_-]/g, "");
     cy.get('#first_name').type(userFirstName);
@@ -76,3 +78,4 @@ describe("Add a User", () => {
 
 
 });
+

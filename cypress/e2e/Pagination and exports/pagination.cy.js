@@ -11,8 +11,10 @@ describe('Pagination and show items', () => {
     allRoutes.forEach(pageUrl => {
 
         it(`page:${pageUrl}`, () => {
-            cy.login('lopsang@supportwebo.onmicrosoft.com', '>H^|u:~IwBF7L1{_e15')
-            cy.wait(3000)
+            cy.login()
+            cy.wait(2000)
+            cy.UpdateRefreshButton()
+            cy.wait(2000) 
             cy.visit(allRoutes[0]);
             cy.get('.datepicker-input-custom-class').click({ force: true })
             cy.get('.border-r-neutral-400 > :nth-child(5)').click({ force: true })
