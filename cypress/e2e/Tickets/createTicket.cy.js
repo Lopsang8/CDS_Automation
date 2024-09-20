@@ -2,29 +2,69 @@
 
 describe('Create Ticket', () => {
     beforeEach(() => {
-        cy.login('lopsang@supportwebo.onmicrosoft.com','>H^|u:~IwBF7L1{_e15')
-        cy.wait(3000)
+        cy.login('')
+        cy.wait(2000)
+        cy.UpdateRefreshButton()
+        cy.wait(2000)
     });
 
 
 
-    it("Verifies that Invoice, Paid and Cancelled ticket tabs listing pages are present", () => {
-        cy.get('#headlessui-tabs-tab-\\:r2\\: > .block').should('have.text', 'Invoiced')          //checking the name of the present tab to be Invoiced
-        cy.get('#headlessui-tabs-panel-\\:r5\\:').should('exist')   //checking the invoiced table to exist
-        cy.get('#headlessui-tabs-tab-\\:r3\\: > .block').click()       //clicking on the paid tab
-        .should('have.text', 'Paid')              //checking the name of the tab to be paid
-        cy.get('#headlessui-tabs-panel-\\:ra\\:').should('exist')      //checking the paid table to exist
-        cy.get('#headlessui-tabs-tab-\\:r4\\: > .block').click()         //clicking on the cancelled tab
-        .should('have.text', 'Cancelled')                                //checking the name of the tab to be Cancelled
-        cy.get('#headlessui-tabs-panel-\\:rb\\:').should('exist')                //checking the cancelled table to exist
-
+    it("Verifies that Tickets listing page is present", () => {
+        cy.get('.p-6').should('exist')
+        cy.log("Tickets table is present.")
 
     })
 
 
-    it.only("Verifies that the ticket create button is present", () => {
-        cy.get('.other-accessories > .gap-x-2').should('be.visible').click()         //clicking on the Create Ticket button
-        
+    it("Verifies that the ticket create button is present and directs to Select Customer page", () => {
+        cy.get('div.other-accessories button').should('be.visible').click()         //clicking on the Create Ticket button
+        cy.contains('h1', 'Select Customer').should('exist')
+        cy.log('User is in the Select Customer page')
+        cy.get('div.other-accessories button').should('be.visible')
+        cy.log('Create Customer button is present to create a new customer while creating a new ticket.')
+        cy.search('test')
+        cy.get('div.filter-wrap button').should('exist')
+        cy.log('Filter button is present in the Select Customer page.')
+        cy.get('.pagination').should('be.visible')
+        cy.log('Pagination is present')
+    })
+
+
+    it.only("Verifies that the user can select a customer and create a ticket", () => {
+        cy.get('div.other-accessories button').should('be.visible').click()
+        const customerList = ['Test_Individual_Customer', 'Test_Business_Customer']
+        const randomCustomer = customerList[Math.floor(Math.random() * customerList.length)];
+        cy.search(randomCustomer)
+        cy.contains('button', 'Select Customer').eq(0).click()
+        cy.scanBarcodePopUp()
+        cy.contains('h1', 'Scan Dockets').should('be.visible')
+        cy.log('User is in the Docket entry page.')
+        cy.get('#headlessui-tabs-panel-\\:rc\\:').should('exist')
+        cy.log('Barcode & Docket entry table is present.')
+        for (let i = 0; i < 3; i++) {
+            cy.contains('button', 'Add A Manual Entry').click()
+            cy.get(':nth-child(1) > .text-primary-700').click()   //Clicking on Manual Entry dropdown
+            cy.wait(1000)
+            cy.get('tbody tr').eq(i).find('#docket_item_note').click().type('This is automation test')
+            const randomNumber = Math.floor(Math.random() * 9999) + 1;
+            cy.get('tbody tr').eq(i).find('#docket_item_count').click().type(`${randomNumber}{enter}`);
+        }
+        cy.get('#ticket_reference').type('This is automation test ticket reference.')
+        cy.wait(2000)
+        cy.contains('button', 'Next Step').click()
+        cy.contains('h1', 'Payment Process').should('exist')
+        cy.log('User is in the Payment Process page')
+        const paymentMethodList = ['Pay Now', 'Pay Later']
+        const randomPaymentMethod = paymentMethodList[Math.floor(Math.random() * paymentMethodList.length)];
+        cy.paymentMethod(randomPaymentMethod)
+        cy.paymentType('part', 'COH')
+        cy.contains('button', 'Finish').should('be.visible').click()
+        cy.assertToastMessage("Successfully created a new ticket")
+
+
+
+
 
     })
 

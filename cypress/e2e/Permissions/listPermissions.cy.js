@@ -72,7 +72,7 @@ describe("Permissions", () => {
     ];
 
 
-    let allPermissionsPresent = true; 
+    let allPermissionsPresent = true;
     cy.get('input[name="Search"]').click().type("{selectall}{backspace}");
     permissionsList.forEach(permission => {
       cy.get('input[name="Search"]').click().type(permission)
@@ -82,7 +82,7 @@ describe("Permissions", () => {
           allPermissionsPresent = false; // Mark as false if permission is missing
         }
       });
-      
+
       cy.get('input[name="Search"]').clear();
     })
     cy.then(() => {
@@ -93,9 +93,8 @@ describe("Permissions", () => {
         throw new Error('Some permissions are missing'); // Fails the test if not all permissions are found
       }
     });
-   
+
   });
 
 
 });
-

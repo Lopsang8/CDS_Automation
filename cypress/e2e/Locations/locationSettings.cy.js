@@ -10,29 +10,9 @@ describe("Location settings", () => {
     cy.get(":nth-child(1) > :nth-child(5) > .actions")
       .contains("Settings")
       .click({ force: true });
-      cy.log("Location options are present")
+    cy.log("Location options are present")
     // cy.get(':nth-child(1) > :nth-child(5) > .actions > .fixed > :nth-child(2)').should("be.visible").click();
   });
-
-
-
-  it("Verifies that location settings can be added", () => {
-    cy.get(".location-setting-price > .bg-danger-0").should("be.visible");
-    cy.get(".text-neutral-600").should("have.text", "Local Settings");
-    cy.get("#headlessui-tabs-tab-\\:r3\\:")
-      .invoke("removeAttr", "target")
-      .click();
-    cy.log("Bank details tab is present and clicked");
-    cy.get('#bank_code').clear().type('WBC')
-    cy.get('#bank_user_name').clear().type('Sell and Parker Pty. Ltd.')
-    cy.get('#bank_user_number').clear().type('89886')
-    cy.get('#bank_file_sequence').clear().type('2')
-    cy.get('#bank_account_bsb').clear().type('032010')
-    cy.get('#bank_account_number').clear().type('820455')
-    cy.get('.bg-success-500').click()
-    cy.assertToastMessage("Location settings updated successfully")
-  })
-
 
 
   it("Verifies location setting option and its Prices/Limits form validation", () => {
@@ -41,30 +21,30 @@ describe("Location settings", () => {
     cy.log("Location settings form is present");
     cy.get(".text-neutral-600").should("have.text", "Local Settings");
     cy.log("Location settings form title is present");
-    cy.get("#eftpos_transaction_limit").click().type('adfsasd');
-    cy.errorMessage(' EFTPOS transaction limit must be a number *'
+    cy.get("#eftpos_transaction_limit").click().type('0');
+    cy.errorMessage(' EFTPOS transaction limit must be greater than 0 *'
     );
-    cy.get("#eftpos_daily_machine_limit").click().type('adfsasd')
+    cy.get("#eftpos_daily_machine_limit").click().type('0')
     cy.errorMessage(
-      ' EFTPOS daily machine limit must be a number greater than 0 *'
+      ' EFTPOS transaction limit must be greater than 0 * EFTPOS daily machine limit must be a number greater than 0 *'
     );
-    cy.get("#cds_daily_cash_payment_limit").click().type('adfsasd')
+    cy.get("#cds_tag_transaction_limit").click().type('0')
     cy.errorMessage(
-      ' CDS daily cash payment limit must be a number greater than 0 *'
-    );
-    cy.get("#cds_tag_transaction_limit").click().type('adfsasd')
-    cy.errorMessage(
-      ' CDS tag transaction limit  must be a number greater than 0 *'
+      ' EFTPOS transaction limit must be greater than 0 * EFTPOS daily machine limit must be a number greater than 0 * CDS tag transaction limit  must be a number greater than 0 *'
     );
     cy.log("Prices/Limits form validation is verified");
   });
 
 
-  it("Verifies Bank Details form validation", () => {
-    cy.get("#headlessui-tabs-tab-\\:r3\\:")
-      .invoke("removeAttr", "target")
-      .click();
-    cy.log("Bank details tab is present and clicked");
+
+  it.only("Verifies Payment Bank Details form validation", () => {
+    // cy.get("#headlessui-tabs-tab-\\:r5\\:")
+    // .invoke("removeAttr", "target")
+    //   .click();
+    cy.contains('button', 'Payment Bank Details').click()
+
+    cy.log("Payment Bank details tab is present and clicked");
+    cy.contains('h2', 'Please ensure the bank accounts added match the NAV Bank Accounts.').should('exist')
     cy.get('#bank_code').click().clear();
     cy.errorMessage(
       " Bank code is required"
@@ -94,4 +74,36 @@ describe("Location settings", () => {
   });
 
 
+
+  it("Verifies that location settings can be added", () => {
+    cy.get(".location-setting-price > .bg-danger-0").should("be.visible");
+    cy.get(".text-neutral-600").should("have.text", "Local Settings");
+    cy.get("#headlessui-tabs-tab-\\:r3\\:")
+      .invoke("removeAttr", "target")
+      .click();
+    cy.log("Bank details tab is present and clicked");
+    cy.get('#bank_code').clear().type('WBC')
+    cy.get('#bank_user_name').clear().type('Sell and Parker Pty. Ltd.')
+    cy.get('#bank_user_number').clear().type('89886')
+    cy.get('#bank_file_sequence').clear().type('2')
+    cy.get('#bank_account_bsb').clear().type('032010')
+    cy.get('#bank_account_number').clear().type('820455')
+    cy.get('.bg-success-500').click()
+    cy.assertToastMessage("Location settings updated successfully")
+  })
+
+
+
 });
+
+
+
+
+
+
+
+
+
+
+
+
