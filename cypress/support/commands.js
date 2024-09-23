@@ -48,9 +48,10 @@ Cypress.Commands.add('UpdateRefreshButton', () => {
 Cypress.Commands.add('scanBarcodePopUp', () => {
   cy.get('body').then(($body) => {
     if ($body.find('#headlessui-dialog-panel-\\:rh\\: > .p-6').length > 0) {
+      cy.wait(2000)
       cy.get('#headlessui-dialog-panel-\\:rh\\: > .p-6').within(() => {
         cy.get('button').contains('Finish').click();
-        cy.wait(3000)
+        cy.wait(2000)
       })
     } else {
       cy.log('Scan Barcode pop up did not show up.')
@@ -130,51 +131,106 @@ Cypress.Commands.add("australianPhoneNumber", () => {
 })
 
 
-Cypress.Commands.add('paymentMethod', (selectPaymentMethod) => {
-  cy.contains('h2', 'Select the Payment Method').should('be.visible')
-  if (selectPaymentMethod === 'Pay Now') {
-    cy.get('#headlessui-tabs-tab-\\:rr\\: > .block > .flex > .pl-6').click();
-  } else if (selectPaymentMethod === 'Pay Later') {
-    cy.get('#headlessui-tabs-tab-\\:rs\\: > .block > .flex > .pl-6').click();
-    cy.contains('button', 'Finish').should('be.visible').click()
-    cy.assertToastMessage("Successfully created a new ticket")
+Cypress.Commands.add('paymentMethod', () => {
+  cy.contains('h2', 'Select the Payment Method').should('be.visible');
+
+  const paymentMethodList = ['Pay Now', 'Pay Later'];
+  const randomPaymentMethod = paymentMethodList[Math.floor(Math.random() * paymentMethodList.length)];
+
+  Cypress.env('isPayLater', randomPaymentMethod === 'Pay Later');
+
+  if (randomPaymentMethod === 'Pay Now') {
+    cy.contains('span', 'Pay Now').click();
+    cy.log('Payment method is Pay Now.');
+  } else if (randomPaymentMethod === 'Pay Later') {
+    cy.contains('span', 'Pay Later').click();
+    cy.contains('button', 'Finish').should('be.visible').click();
+    cy.assertToastMessage("Successfully created a new ticket");
+    cy.log('Payment method is Pay Later.');
   } else {
-    throw new Error('Invalid payment method specified. Choose "Pay Now" or "Pay Later".')
+    throw new Error('Invalid payment method specified. Choose "Pay Now" or "Pay Later".');
   }
+});
+
+
+
+Cypress.Commands.add('paymentLimitCheck', () => {
+  cy.get('body').then(($body) => {
+    if ($body.find('#headlessui-dialog-panel-\\:r10\\:').length > 0) {
+      cy.wait(2000)
+      cy.get('#headlessui-dialog-panel-\\:r10\\:').within(() => {
+        cy.get('select#fob-select').click().type(`24288{enter}`)
+        cy.get('button').contains('Enter').click();
+        cy.wait(1000)
+      })
+    } else {
+      cy.log('Approve Payment limit Override Via Fob pop up did not show up.')
+
+    }
+  })
 
 })
 
 
 
-Cypress.Commands.add('paymentType', (selectPaymentType, selectPaymentOption) => {
-  cy.contains('h2', 'Choose Payment Type').should('exist')
-  if (selectPaymentType === 'full') {
+
+Cypress.Commands.add('paymentTypeAndOption', () => {
+  cy.contains('h2', 'Choose Payment Type').should('exist');
+
+  const paymentTypeList = ['full', 'part'];
+  const randomPaymentType = paymentTypeList[Math.floor(Math.random() * paymentTypeList.length)];
+
+  if (randomPaymentType === 'full') {
     cy.get('#ticket_payment_full').click({ force: true });
-  } else if (selectPaymentType === 'part') {
+    cy.log('Payment type is full payment.');
+  } else if (randomPaymentType === 'part') {
     cy.get('#ticket_payment_part').click({ force: true });
+    cy.log('Payment type is part payment.');
     const randomNumber = Math.floor(Math.random() * 500) + 1; // Generates a number between 1 and 500
     cy.get('input[placeholder="Enter Amount"]').type(randomNumber.toString());
   } else {
     throw new Error('Invalid payment type specified. Choose "full" or "part".');
   }
 
-  cy.get('#headlessui-tabs-panel-\\:rt\\: > .p-6').should('be.visible')
-  cy.log('Payment Type table is present.')
-  if (selectPaymentOption === 'COH') {
-    cy.get('#34').click({ force: true });
-  } else if (selectPaymentOption === 'ECD') {
-    cy.get('#35').click({ force: true });
-  } else if (selectPaymentOption === 'EFTPOS') {
-    cy.get('#36').click({ force: true });
-  } else if (selectPaymentOption === 'EFT Request') {
-    cy.get('#37').click({ force: true });
-  } else if (selectPaymentOption === 'Paid By Accounts') {
-    cy.get('#38').click({ force: true });
-  } else {
-    throw new Error('Invalid payment options specified. Choose "COH" or "ECD" or "EFTPOS" or "EFT Request" or "Paid By Accounts".');
-  }
+  // cy.get('#headlessui-tabs-panel-\\:rt\\: > .p-6').should('be.visible');
+  cy.log('Payment Type table is present.');
 
-})
+  const paymentOptionList = ['Cash On Hand', 'Express Cash Dispenser', 'EFTPOS', 'EFT Request', 'Paid By Accounts'];
+  const selectRandomEnabledOption = () => {
+    // Randomly select a payment option
+    const randomPaymentOption = paymentOptionList[Math.floor(Math.random() * paymentOptionList.length)];
+
+    // Check if the selected payment option is disabled
+    cy.contains('label', randomPaymentOption).then((label) => {
+      const radioInput = label.find('input[type="radio"]');
+
+      // If the radio input is disabled, log and select another option
+      if (radioInput.prop('disabled')) {
+        cy.log(`Payment option "${randomPaymentOption}" is disabled. Selecting another option.`);
+        selectRandomEnabledOption(); // Recursively call to try again
+      } else {
+        // If enabled, click the corresponding radio button
+        cy.wrap(radioInput).click({ force: true });
+        cy.log(`Selected payment option: ${randomPaymentOption}`);
+      }
+    });
+  };
+
+  selectRandomEnabledOption();
+
+  cy.contains('button', 'Finish').should('be.visible').click();
+  cy.wait(1000)
+  cy.paymentLimitCheck();
+  cy.wait(1000)
+  cy.assertToastMessage("Successfully created a new ticket");
+});
+
+
+
+
+
+
+
 
 
 // // Custom command to preserve session

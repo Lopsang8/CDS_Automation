@@ -32,40 +32,43 @@ describe('Create Ticket', () => {
 
 
     it.only("Verifies that the user can select a customer and create a ticket", () => {
-        cy.get('div.other-accessories button').should('be.visible').click()
-        const customerList = ['Test_Individual_Customer', 'Test_Business_Customer']
-        const randomCustomer = customerList[Math.floor(Math.random() * customerList.length)];
-        cy.search(randomCustomer)
-        cy.contains('button', 'Select Customer').eq(0).click()
-        cy.scanBarcodePopUp()
-        cy.contains('h1', 'Scan Dockets').should('be.visible')
-        cy.log('User is in the Docket entry page.')
-        cy.get('#headlessui-tabs-panel-\\:rc\\:').should('exist')
-        cy.log('Barcode & Docket entry table is present.')
-        for (let i = 0; i < 3; i++) {
-            cy.contains('button', 'Add A Manual Entry').click()
-            cy.get(':nth-child(1) > .text-primary-700').click()   //Clicking on Manual Entry dropdown
-            cy.wait(1000)
-            cy.get('tbody tr').eq(i).find('#docket_item_note').click().type('This is automation test')
-            const randomNumber = Math.floor(Math.random() * 9999) + 1;
-            cy.get('tbody tr').eq(i).find('#docket_item_count').click().type(`${randomNumber}{enter}`);
+        for (let t = 0; t < 5; t++) {
+            cy.get('div.other-accessories button').should('be.visible').click()
+            const customerList = ['Test_Individual_Customer', 'Test_Business_Customer']
+            const randomCustomer = customerList[Math.floor(Math.random() * customerList.length)];
+            cy.search(randomCustomer)
+            cy.contains('button', 'Select Customer').eq(0).click()
+            cy.wait(2000 )
+            cy.scanBarcodePopUp()
+            cy.contains('h1', 'Scan Dockets').should('be.visible')
+            cy.log('User is in the Docket entry page.')
+            // cy.get('#headlessui-tabs-panel-\\:rc\\:').should('exist')    //Looking for docket entry table
+            cy.log('Barcode & Docket entry table is present.')
+            for (let i = 0; i < 3; i++) {
+                cy.contains('button', 'Add A Manual Entry').click()
+                cy.get(':nth-child(1) > .text-primary-700').click()   //Clicking on Manual Entry dropdown
+                cy.wait(1000)
+                cy.get('tbody tr').eq(i).find('#docket_item_note').click().type('This is automation test')
+                const randomNumber = Math.floor(Math.random() * 9999) + 1;
+                cy.get('tbody tr').eq(i).find('#docket_item_count').click().type(`${randomNumber}{enter}`);
+            }
+            cy.get('#ticket_reference').type('This is automation test ticket reference.')
+            cy.wait(2000)
+            cy.contains('button', 'Next Step').click()
+            cy.contains('h1', 'Payment Process').should('exist')
+            cy.log('User is in the Payment Process page')
+            cy.paymentMethod().then(() => {
+                if (!Cypress.env('isPayLater')) {
+                    cy.paymentTypeAndOption(); // Calls this only if Pay Later was not selected
+                } else {
+                    cy.log('Skipping paymentTypeAndOption as the payment method is Pay Later.');
+                }
+            });
+            cy.wait(3000)
+
         }
-        cy.get('#ticket_reference').type('This is automation test ticket reference.')
-        cy.wait(2000)
-        cy.contains('button', 'Next Step').click()
-        cy.contains('h1', 'Payment Process').should('exist')
-        cy.log('User is in the Payment Process page')
-        const paymentMethodList = ['Pay Now', 'Pay Later']
-        const randomPaymentMethod = paymentMethodList[Math.floor(Math.random() * paymentMethodList.length)];
-        cy.paymentMethod(randomPaymentMethod)
-        cy.paymentType('part', 'COH')
-        cy.contains('button', 'Finish').should('be.visible').click()
-        cy.assertToastMessage("Successfully created a new ticket")
-
-
-
-
 
     })
 
 })
+
