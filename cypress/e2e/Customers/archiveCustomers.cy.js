@@ -10,27 +10,26 @@ describe("Archive Customers", () => {
 
     it("Verifies that customers can be archived", () => {
 
-        cy.get(":nth-child(1) > .text-center > .actions")
-            .contains("Archive")
-            .click({ force: true });
-        cy.get('#headlessui-dialog-panel-\\:r9\\:')
-            .then(($modal) => {
-                if ($modal.length > 0) {
-                    cy.log('Initial attempt succeeded')
-                } else {
-                    cy.get('#headlessui-dialog-panel-\\\\:').invoke('attr', 'id')
-                        .then((id) => {
-                            const dynamicId = id.split(':')[2]; // Assuming the dynamic part is the third part of the ID
-                            cy.get(`#headlessui-dialog-panel-\\:${dynamicId}\\:`); // Using the dynamic ID in the locator
-                        });
-                }
+        for (let i = 0; i < 5; i++) {
+            cy.get('span.action-icon').eq(i).click()
+            cy.contains("Archive")
+                .click({ force: true });
 
-            })
+            cy.get('[data-headlessui-state="open"]')
+                .then(($modal) => {
+                    if ($modal.length > 0) {
+                        cy.log('Archive Customer prompts confirmation')
+                    }
+                    else {
+                        cy.log('No pop up found.')
+                    }
+                });
 
-
-        cy.get('.bg-success-500').click()
-        cy.get(".Toastify").contains('archived successfully')
-        cy.log('Customer has been archived successfully!')
+            cy.get('.bg-success-500').click();
+            cy.get(".Toastify").contains('archived successfully');
+            cy.log('Customer has been archived successfully!');
+            cy.wait(3000)
+        }
 
     })
 })

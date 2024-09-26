@@ -10,25 +10,24 @@ describe("User Delete", () => {
     })
 
     it("Verifies that users can be deleted", () => {
-        cy.get('span.action-icon').first().click()
+        for (let i = 0; i < 5; i++) {
+            cy.get('span.action-icon').first().click()
             cy.contains("Archive")
-            .click({ force: true });
-        cy.get('#headlessui-dialog-panel-\\:r3\\:')
-            .then(($modal) => {
-                if ($modal.length > 0) {
-                    cy.log('Initial attempt succeeded')
-                } else {
-                    cy.get('#headlessui-dialog-panel-\\\\:').invoke('attr', 'id')
-                        .then((id) => {
-                            const dynamicId = id.split(':')[2]; // Assuming the dynamic part is the third part of the ID
-                            cy.get(`#headlessui-dialog-panel-\\:${dynamicId}\\:`); // Use the dynamic ID in the locator
-                        });
-                }
+                .click({ force: true });
+            cy.get('[data-headlessui-state="open"]')
+                .then(($modal) => {
+                    if ($modal.length > 0) {
+                        cy.log('Delete user prompts confirmation')
+                    } else {
+                        cy.log('No confirmation prompt found.')
+                    }
 
-            })
+                })
 
-        cy.get('.bg-success-500').click()
-        cy.assertToastMessage("User archived successfully")
+            cy.get('.bg-success-500').click()
+            cy.assertToastMessage("User archived successfully")
+            cy.wait(3000)
+        }
     })
 
 

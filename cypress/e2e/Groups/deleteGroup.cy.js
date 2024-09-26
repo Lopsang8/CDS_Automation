@@ -8,25 +8,26 @@ describe("Delete Group", () => {
     })
 
     it("Verifies that user can be deleted", () => {
-        cy.get('span.relative').eq(0).click()
-        cy.contains("Delete")
-            .click({ force: true });
-        cy.get('#headlessui-dialog-panel-\\:r7\\:')
-            .then(($modal) => {
-                if ($modal.length > 0) {
-                    cy.log('Initial attempt succeeded')
-                } else {
-                    cy.get('#headlessui-dialog-panel-\\\\:').invoke('attr', 'id')
-                        .then((id) => {
-                            const dynamicId = id.split(':')[2]; // Assuming the dynamic part is the third part of the ID
-                            cy.get(`#headlessui-dialog-panel-\\:${dynamicId}\\:`); // Using the dynamic ID in the locator
-                        });
-                }
+        for (let i = 0; i < 5; i++) {
+            cy.get('span.relative').eq(i).click()
+            cy.contains("Delete")
+                .click({ force: true });
+            cy.get('[data-headlessui-state="open"]')
+                .then(($modal) => {
+                    if ($modal.length > 0) {
+                        cy.log('Delete Group prompts confirmation.')
+                    } else {
+                        cy.log('No confirmation prompted.')
+                    }
 
-            })
+                })
 
-        cy.get('.bg-success-500').click()
-        cy.assertToastMessage("Group Deleted Successfully")
+            cy.get('.bg-success-500').click()
+            cy.assertToastMessage("Group Deleted Successfully")
+            cy.wait(3000)
+
+
+        }
 
     })
 })

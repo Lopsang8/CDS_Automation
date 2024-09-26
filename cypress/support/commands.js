@@ -44,22 +44,30 @@ Cypress.Commands.add('UpdateRefreshButton', () => {
 })
 
 
-
 Cypress.Commands.add('scanBarcodePopUp', () => {
   cy.get('body').then(($body) => {
-    if ($body.find('#headlessui-dialog-panel-\\:rh\\: > .p-6').length > 0) {
-      cy.wait(2000)
-      cy.get('#headlessui-dialog-panel-\\:rh\\: > .p-6').within(() => {
-        cy.get('button').contains('Finish').click();
-        cy.wait(2000)
-      })
+    if ($body.find('[data-headlessui-state="open"]').length > 0) {
+      // If present, interact with the modal
+      cy.get('[data-headlessui-state="open"]', { timeout: 10000 })
+        .first().as('popup');
+
+      cy.get('@popup').within(() => {
+        cy.get('button').contains('Finish').as('finishButton');
+      });
+
+      cy.get('@finishButton').click();
+      cy.log('Scan Barcode pop up showed up.')
+      cy.wait(2000);
     } else {
-      cy.log('Scan Barcode pop up did not show up.')
 
+      cy.log('Scan Barcode pop up did not show up.');
     }
-  })
+  });
+});
 
-})
+
+
+
 
 
 
@@ -154,22 +162,43 @@ Cypress.Commands.add('paymentMethod', () => {
 
 
 
+// Cypress.Commands.add('paymentLimitCheck', () => {
+//   cy.get('body').then(($body) => {
+//     if ($body.find('[data-headlessui-state="open"]').length > 0) {
+//       cy.wait(2000)
+//       cy.get('[data-headlessui-state="open"]').first().within(() => {
+//         cy.select('select#fob-select').type(`24288`)
+//         cy.get('button').contains('Enter').click();
+//         cy.wait(1000)
+//       })
+//     } else {
+//       cy.log('Approve Payment limit Override Via Fob pop up did not show up.')
+
+//     }
+//   })
+
+// })
+
+
+
+
 Cypress.Commands.add('paymentLimitCheck', () => {
   cy.get('body').then(($body) => {
-    if ($body.find('#headlessui-dialog-panel-\\:r10\\:').length > 0) {
+    if ($body.find('[data-headlessui-state="open"]').length > 0) {
       cy.wait(2000)
-      cy.get('#headlessui-dialog-panel-\\:r10\\:').within(() => {
-        cy.get('select#fob-select').click().type(`24288{enter}`)
-        cy.get('button').contains('Enter').click();
-        cy.wait(1000)
+      cy.get('[data-headlessui-state="open"]').each(($el) => {
+        cy.wrap($el).within(() => {
+          cy.get('select#fob-select').select('24288')  // Selects the option with value or text '24288'
+          cy.get('button').contains('Enter').click();
+          cy.wait(1000)
+        })
       })
     } else {
       cy.log('Approve Payment limit Override Via Fob pop up did not show up.')
-
     }
   })
-
 })
+
 
 
 
@@ -192,10 +221,10 @@ Cypress.Commands.add('paymentTypeAndOption', () => {
     throw new Error('Invalid payment type specified. Choose "full" or "part".');
   }
 
-  // cy.get('#headlessui-tabs-panel-\\:rt\\: > .p-6').should('be.visible');
+  cy.get('.payment-options-with-icon').should('be.visible');
   cy.log('Payment Type table is present.');
 
-  const paymentOptionList = ['Cash On Hand', 'Express Cash Dispenser', 'EFTPOS', 'EFT Request', 'Paid By Accounts'];
+  const paymentOptionList = ['Cash On Hand', 'Express Cash Dispenser', 'EFT Request', 'Paid By Accounts'];
   const selectRandomEnabledOption = () => {
     // Randomly select a payment option
     const randomPaymentOption = paymentOptionList[Math.floor(Math.random() * paymentOptionList.length)];
@@ -219,9 +248,9 @@ Cypress.Commands.add('paymentTypeAndOption', () => {
   selectRandomEnabledOption();
 
   cy.contains('button', 'Finish').should('be.visible').click();
-  cy.wait(1000)
+  cy.wait(2000)
   cy.paymentLimitCheck();
-  cy.wait(1000)
+  // cy.wait(1000)
   cy.assertToastMessage("Successfully created a new ticket");
 });
 

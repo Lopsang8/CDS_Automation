@@ -31,18 +31,18 @@ describe('Create Ticket', () => {
     })
 
 
-    it.only("Verifies that the user can select a customer and create a ticket", () => {
+    it("Verifies that the user can select a customer and create a ticket", () => {
         for (let t = 0; t < 5; t++) {
             cy.get('div.other-accessories button').should('be.visible').click()
             const customerList = ['Test_Individual_Customer', 'Test_Business_Customer']
             const randomCustomer = customerList[Math.floor(Math.random() * customerList.length)];
             cy.search(randomCustomer)
             cy.contains('button', 'Select Customer').eq(0).click()
-            cy.wait(2000 )
+            // cy.wait(1000)
             cy.scanBarcodePopUp()
             cy.contains('h1', 'Scan Dockets').should('be.visible')
             cy.log('User is in the Docket entry page.')
-            // cy.get('#headlessui-tabs-panel-\\:rc\\:').should('exist')    //Looking for docket entry table
+            // cy.get('[data-headlessui-state="open"]').should('exist')    //Looking for docket entry table
             cy.log('Barcode & Docket entry table is present.')
             for (let i = 0; i < 3; i++) {
                 cy.contains('button', 'Add A Manual Entry').click()
