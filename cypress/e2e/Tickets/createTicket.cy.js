@@ -15,6 +15,11 @@ describe('Create Ticket', () => {
         cy.log("Tickets table is present.")
 
     })
+    
+
+    it('Verifies that the datepicker is set to today always', () => {
+        cy.datepicker()
+    })   
 
 
     it("Verifies that the ticket create button is present and directs to Select Customer page", () => {

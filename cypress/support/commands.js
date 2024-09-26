@@ -188,7 +188,7 @@ Cypress.Commands.add('paymentLimitCheck', () => {
       cy.wait(2000)
       cy.get('[data-headlessui-state="open"]').each(($el) => {
         cy.wrap($el).within(() => {
-          cy.get('select#fob-select').select('24288')  // Selects the option with value or text '24288'
+          cy.get('select#fob-select').select('24288')
           cy.get('button').contains('Enter').click();
           cy.wait(1000)
         })
@@ -255,7 +255,19 @@ Cypress.Commands.add('paymentTypeAndOption', () => {
 });
 
 
+const dayjs = require('dayjs');
+Cypress.Commands.add('datepicker', () => {
+  cy.get('input.datepicker-input-custom-class').should('exist').as('datepicker');
+        const today = dayjs().format('MMM D, YYYY');
+        cy.get('@datepicker').invoke('val').then((datepickerValue) => {
+            if (datepickerValue === today) {
+                cy.log('Date is set to Today');
+            } else {
+                cy.log('Date is incorrect');
+            }
+        });
 
+})
 
 
 

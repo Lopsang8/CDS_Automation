@@ -26,5 +26,8 @@
     "cypress": "^13.7.0",
     "cypress-file-upload": "^5.0.8",
     "cypress-wait-until": "^2.0.1"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.13"
   }
 }
