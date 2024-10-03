@@ -25,4 +25,10 @@ describe("Refunds", () => {
     })
 
 
+    it('Verifies that Pay Refund button and pay refund page is present', () => {
+        cy.contains('button', 'Pay Refunds').click()
+        cy.contains('h1', 'Pay Refund')
+    })
+
+
 })

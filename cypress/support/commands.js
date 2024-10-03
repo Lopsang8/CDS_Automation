@@ -74,7 +74,7 @@ Cypress.Commands.add('scanBarcodePopUp', () => {
 
 Cypress.Commands.add('search', (searchedData) => {
   cy.get('input[name="Search"]').should('be.visible').clear().type(searchedData);
-  cy.wait(8000);
+  cy.wait(6000);
 
   cy.get('table tbody').then($tbody => {
     const noResult = $tbody.find('div.no-result').length > 0; // Check if a 'no-result' div exists
@@ -112,6 +112,12 @@ Cypress.Commands.add("assertToastMessage", (expectedText) => {
   cy.get(".Toastify")
     .should("exist")
     .and("have.text", expectedText);
+})
+
+
+Cypress.Commands.add("errorToast", () => {
+  cy.get(".Toastify")
+    .should("exist")
 })
 
 
@@ -162,22 +168,50 @@ Cypress.Commands.add('paymentMethod', () => {
 
 
 
-// Cypress.Commands.add('paymentLimitCheck', () => {
-//   cy.get('body').then(($body) => {
-//     if ($body.find('[data-headlessui-state="open"]').length > 0) {
-//       cy.wait(2000)
-//       cy.get('[data-headlessui-state="open"]').first().within(() => {
-//         cy.select('select#fob-select').type(`24288`)
-//         cy.get('button').contains('Enter').click();
-//         cy.wait(1000)
-//       })
-//     } else {
-//       cy.log('Approve Payment limit Override Via Fob pop up did not show up.')
 
-//     }
-//   })
 
-// })
+Cypress.Commands.add('paymentType', () => {
+  cy.contains('h2', 'Choose Payment Type').should('exist');
+
+  const paymentTypeList = ['full', 'part'];
+  const randomPaymentType = paymentTypeList[Math.floor(Math.random() * paymentTypeList.length)];
+
+  if (randomPaymentType === 'full') {
+    cy.contains('span', 'Full Payment').click({ force: true });
+    cy.log('Payment type is full payment.');
+  } else if (randomPaymentType === 'part') {
+    cy.contains('span', 'Part Payment').click({ force: true });
+    cy.log('Payment type is part payment.');
+
+
+    function enterRandomAmountAndValidate() {
+      const randomNumber = Math.floor(Math.random() * 500) + 1;
+      cy.log(`Generated random amount: ${randomNumber}`);
+
+
+      cy.get('input[placeholder="Enter Amount"]').clear().type(randomNumber.toString());
+
+      cy.wait(1000)
+
+      cy.get('.error-message')
+        .then(($message) => {
+          if ($message.is(':visible')) {
+
+            cy.log('Validation message is visible: Amount cannot be greater than payable amount.');
+            enterRandomAmountAndValidate();
+          } else {
+            cy.log('No validation message present. Proceeding to the next step.');
+          }
+        });
+    }
+
+    enterRandomAmountAndValidate();
+  } else {
+    throw new Error('Invalid payment type specified. Choose "full" or "part".');
+  }
+});
+
+
 
 
 
@@ -185,60 +219,37 @@ Cypress.Commands.add('paymentMethod', () => {
 Cypress.Commands.add('paymentLimitCheck', () => {
   cy.get('body').then(($body) => {
     if ($body.find('[data-headlessui-state="open"]').length > 0) {
-      cy.wait(2000)
-      cy.get('[data-headlessui-state="open"]').each(($el) => {
-        cy.wrap($el).within(() => {
-          cy.get('select#fob-select').select('24288')
-          cy.get('button').contains('Enter').click();
-          cy.wait(1000)
-        })
-      })
+      cy.wait(2000); // Wait for the popup to stabilize
+      cy.get('[data-headlessui-state="open"]')
+        .first() // Ensure only the first open element is selected
+        .within(() => {
+          cy.get('select#fob-select').select('24288');
+          cy.wait(1000);
+          cy.get('button').contains('Enter').click({ force: true });
+          cy.wait(1000);
+        });
     } else {
-      cy.log('Approve Payment limit Override Via Fob pop up did not show up.')
+      cy.log('Approve Payment limit Override Via Fob pop up did not show up.');
     }
-  })
-})
+  });
+});
 
 
 
 
 
-Cypress.Commands.add('paymentTypeAndOption', () => {
-  cy.contains('h2', 'Choose Payment Type').should('exist');
 
-  const paymentTypeList = ['full', 'part'];
-  const randomPaymentType = paymentTypeList[Math.floor(Math.random() * paymentTypeList.length)];
-
-  if (randomPaymentType === 'full') {
-    cy.get('#ticket_payment_full').click({ force: true });
-    cy.log('Payment type is full payment.');
-  } else if (randomPaymentType === 'part') {
-    cy.get('#ticket_payment_part').click({ force: true });
-    cy.log('Payment type is part payment.');
-    const randomNumber = Math.floor(Math.random() * 500) + 1; // Generates a number between 1 and 500
-    cy.get('input[placeholder="Enter Amount"]').type(randomNumber.toString());
-  } else {
-    throw new Error('Invalid payment type specified. Choose "full" or "part".');
-  }
-
-  cy.get('.payment-options-with-icon').should('be.visible');
-  cy.log('Payment Type table is present.');
-
+Cypress.Commands.add("paymentOption", () => {
   const paymentOptionList = ['Cash On Hand', 'Express Cash Dispenser', 'EFT Request', 'Paid By Accounts'];
   const selectRandomEnabledOption = () => {
-    // Randomly select a payment option
     const randomPaymentOption = paymentOptionList[Math.floor(Math.random() * paymentOptionList.length)];
 
-    // Check if the selected payment option is disabled
     cy.contains('label', randomPaymentOption).then((label) => {
       const radioInput = label.find('input[type="radio"]');
-
-      // If the radio input is disabled, log and select another option
       if (radioInput.prop('disabled')) {
         cy.log(`Payment option "${randomPaymentOption}" is disabled. Selecting another option.`);
-        selectRandomEnabledOption(); // Recursively call to try again
+        selectRandomEnabledOption();
       } else {
-        // If enabled, click the corresponding radio button
         cy.wrap(radioInput).click({ force: true });
         cy.log(`Selected payment option: ${randomPaymentOption}`);
       }
@@ -250,24 +261,161 @@ Cypress.Commands.add('paymentTypeAndOption', () => {
   cy.contains('button', 'Finish').should('be.visible').click();
   cy.wait(2000)
   cy.paymentLimitCheck();
-  // cy.wait(1000)
-  cy.assertToastMessage("Successfully created a new ticket");
-});
+
+
+})
+
+
+
+
+
 
 
 const dayjs = require('dayjs');
 Cypress.Commands.add('datepicker', () => {
   cy.get('input.datepicker-input-custom-class').should('exist').as('datepicker');
-        const today = dayjs().format('MMM D, YYYY');
-        cy.get('@datepicker').invoke('val').then((datepickerValue) => {
-            if (datepickerValue === today) {
-                cy.log('Date is set to Today');
-            } else {
-                cy.log('Date is incorrect');
-            }
-        });
+  const today = dayjs().format('MMM D, YYYY');
+  cy.get('@datepicker').invoke('val').then((datepickerValue) => {
+    if (datepickerValue === today) {
+      cy.log('Date is set to Today');
+    } else {
+      cy.log('Date is incorrect');
+    }
+  });
 
 })
+
+
+
+
+Cypress.Commands.add('checkData', () => {
+  cy.get('table tbody').then($tbody => {
+    const noResult = $tbody.find('div.no-result').length > 0;
+    const rows = $tbody.find('tr');
+    if (noResult && rows.length === 0) {
+      cy.log(`Nothing Found to display page is seen.`);
+    } else {
+      cy.get('table tbody tr')
+        .its('length')
+        .then((rowCount) => {
+          if (rowCount > 0) {
+            cy.log('Table has data.');
+            cy.get('table tbody tr:first')
+              .find('button', 'Pay Invoice')
+              .click();
+          } else {
+            cy.log('Table has no data.');
+          }
+        });
+    }
+  });
+})
+
+
+
+
+
+Cypress.Commands.add('numOfInvoices', () => {
+  let storedNumber;
+  cy.get('table tbody tr').eq(0).within(() => {
+    cy.get('td:nth-child(2)').invoke('text').then((text) => {
+      storedNumber = parseInt(text.trim(), 10);
+      if (!isNaN(storedNumber)) {
+        cy.log(storedNumber)
+        cy.get('td:nth-child(4) input[type="checkbox"]').check({force: true});
+      }
+    });
+  });
+  cy.contains('button', 'Create Batch').click();
+  cy.assertToastMessage('Batch Created Successfully')
+  cy.get('table tbody tr').then(($rows) => {
+    const rowCount = $rows.length-1;
+    if (storedNumber === rowCount) {
+      cy.log('The number of invoices matches the number of rows on the payment summary page.');
+    } else {
+      cy.log(`Mismatch! Number of invoices: ${storedNumber}, Row count: ${rowCount}`);
+    }
+    expect(storedNumber).to.equal(rowCount, `Number of invoices should match the number of rows`);
+  });
+});
+
+
+
+Cypress.Commands.add('generateBankFile', () => {
+  cy.contains('button', 'Generate Bank File').should('be.enabled').click()
+  cy.assertToastMessage('Bank File Regenerated Successfully')
+})
+
+
+// Cypress.Commands.add('paymentTypeAndOption', () => {
+//   cy.contains('h2', 'Choose Payment Type').should('exist');
+
+//   const paymentTypeList = ['full', 'part'];
+//   const randomPaymentType = paymentTypeList[Math.floor(Math.random() * paymentTypeList.length)];
+
+//   if (randomPaymentType === 'full') {
+//     cy.contains('span', 'Full Payment').click({ force: true });
+//     cy.log('Payment type is full payment.');
+//   } else if (randomPaymentType === 'part') {
+//     cy.contains('span', 'Part Payment').click({ force: true });
+//     cy.log('Payment type is part payment.');
+//     cy.get(':nth-child(3) > [colspan="1"]').invoke('text').then((payableAmountText) => {
+//       const payableAmount = parseFloat(payableAmountText.replace(/[^0-9.]/g, ''))
+//       cy.log(`The payable amount is:'${payableAmount}`)
+
+
+//       function enterValidRandomAmount() {
+//         const randomNumber = Math.floor(Math.random() * 500) + 1; // Generates a number between 1 and 500
+//         cy.log(`Generated random amount: ${randomNumber}`);
+
+//         if (randomNumber < payableAmount) {
+//           cy.log('Random amount is less than the payable amount.');
+//           cy.get('input[placeholder="Enter Amount"]').clear().type(randomNumber.toString());
+//         } else {
+//           cy.log('Random amount is greater than the payable amount. Regenerating...');
+//           enterValidRandomAmount(); // Retry if random amount is greater
+//         }
+//       }
+
+//       // Call the function to start the process
+//       enterValidRandomAmount();
+//     })
+//   } else {
+//     throw new Error('Invalid payment type specified. Choose "full" or "part".');
+//   }
+
+//   // cy.get('.payment-options-with-icon').should('be.visible');
+//   cy.log('Payment Type table is present.');
+
+//   const paymentOptionList = ['Cash On Hand', 'Express Cash Dispenser', 'EFT Request', 'Paid By Accounts'];
+//   const selectRandomEnabledOption = () => {
+//     // Randomly select a payment option
+//     const randomPaymentOption = paymentOptionList[Math.floor(Math.random() * paymentOptionList.length)];
+
+//     // Check if the selected payment option is disabled
+//     cy.contains('label', randomPaymentOption).then((label) => {
+//       const radioInput = label.find('input[type="radio"]');
+
+//       // If the radio input is disabled, log and select another option
+//       if (radioInput.prop('disabled')) {
+//         cy.log(`Payment option "${randomPaymentOption}" is disabled. Selecting another option.`);
+//         selectRandomEnabledOption(); // Recursively call to try again
+//       } else {
+//         // If enabled, click the corresponding radio button
+//         cy.wrap(radioInput).click({ force: true });
+//         cy.log(`Selected payment option: ${randomPaymentOption}`);
+//       }
+//     });
+//   };
+
+//   selectRandomEnabledOption();
+
+//   cy.contains('button', 'Finish').should('be.visible').click();
+//   cy.wait(2000)
+//   cy.paymentLimitCheck();
+//   // cy.wait(1000)
+
+// });
 
 
 

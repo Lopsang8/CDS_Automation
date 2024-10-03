@@ -15,11 +15,11 @@ describe('Create Ticket', () => {
         cy.log("Tickets table is present.")
 
     })
-    
+
 
     it('Verifies that the datepicker is set to today always', () => {
         cy.datepicker()
-    })   
+    })
 
 
     it("Verifies that the ticket create button is present and directs to Select Customer page", () => {
@@ -64,7 +64,9 @@ describe('Create Ticket', () => {
             cy.log('User is in the Payment Process page')
             cy.paymentMethod().then(() => {
                 if (!Cypress.env('isPayLater')) {
-                    cy.paymentTypeAndOption(); // Calls this only if Pay Later was not selected
+                    cy.paymentType();
+                    cy.paymentOption();
+                    cy.assertToastMessage("Successfully created a new ticket"); // Calls this only if Pay Later was not selected
                 } else {
                     cy.log('Skipping paymentTypeAndOption as the payment method is Pay Later.');
                 }
