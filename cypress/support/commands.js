@@ -109,6 +109,14 @@ Cypress.Commands.add("assertToastMessage", (expectedText) => {
 
 
 
+Cypress.Commands.add("errorToast", () => {
+  cy.get(".Toastify")
+    .should("exist")
+})
+
+
+
+
 Cypress.Commands.add("errorMessage", (expectedErrorMessage) => {
   cy.get(".error-message")
     .should("have.text", expectedErrorMessage);
