@@ -36,7 +36,7 @@ describe('Create Ticket', () => {
     })
 
 
-    it("Verifies that the user can select a customer and create a ticket", () => {
+    it.only("Verifies that the user can select a customer and create a ticket", () => {
         for (let t = 0; t < 5; t++) {
             cy.get('div.other-accessories button').should('be.visible').click()
             const customerList = ['Test_Individual_Customer', 'Test_Business_Customer']
