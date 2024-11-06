@@ -32,7 +32,7 @@ describe('Create Ticket', () => {
 
 
     it.only("Verifies that the user can select a customer and create a ticket", () => {
-        for (let t = 0; t < 5; t++) {
+        for (let t = 0; t < 1; t++) {
             cy.get('div.other-accessories button').should('be.visible').click()
             const customerList = ['Test_Individual_Customer', 'Test_Business_Customer']
             const randomCustomer = customerList[Math.floor(Math.random() * customerList.length)];

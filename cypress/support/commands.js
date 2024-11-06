@@ -93,6 +93,44 @@ Cypress.Commands.add('search', (searchedData) => {
 
 
 
+
+Cypress.Commands.add('mergeSearch', (searchedData) => {
+  cy.get('input[placeholder="Search"]').should('be.visible').type(searchedData);
+  cy.wait(3000);
+
+  cy.get('.options li').then($options => {
+    const noResult = $options.find('div.no-result').length > 0; // Check if a 'no-result' div exists
+    const rows = $options.find('tr'); // Get all rows in the table
+
+    // If there are no rows or the 'no-result' element is present, log that data was not found
+    if (noResult && rows.length === 0) {
+      cy.log(`Searched Data "${searchedData}" not found.`);
+      cy.get('[class="dropdown-heading-dropdown-arrow gray"]').click({force: true})
+      cy.contains('button', 'Cancel').click();
+    } else {
+      // Otherwise, check if the searched data is contained within the table rows
+      cy.get('.options li').then(($rows) => {
+        const dataFound = $rows.toArray().some(row => row.innerText.includes(searchedData));
+
+        if (dataFound) {
+          cy.log(`Searched Data "${searchedData}" found.`);
+          cy.get('label[role="option"] span').eq(0).click();
+          cy.get('div[class="inline-block text-left"]').eq(4).click();
+          cy.contains('button', 'Merge').click();
+          cy.assertToastMessage("Customer Merged Successfully");
+        } else {
+          cy.log(`Searched Data "${searchedData}" not found.`);
+          cy.get('[class="dropdown-heading-dropdown-arrow gray"]').click({force: true})
+          cy.contains('button', 'Cancel').click();
+        }
+      });
+    }
+  });
+});
+
+
+
+
 Cypress.Commands.add("viewports", (viewportWidth, viewportHeight) => {
   cy.viewport(viewportWidth, viewportHeight);
 });
@@ -370,6 +408,8 @@ Cypress.Commands.add('generateAndStoreValues', () => {
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+
 
 
 
