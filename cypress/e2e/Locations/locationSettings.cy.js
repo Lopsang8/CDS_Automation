@@ -13,6 +13,8 @@ describe("Location settings", () => {
     // cy.get(':nth-child(1) > :nth-child(5) > .actions > .fixed > :nth-child(2)').should("be.visible").click();
   });
 
+
+  
   it("Verifies location setting option and its Prices/Limits form validation", () => {
     cy.log("Location settings option is present and clicked");
     cy.get(".location-setting-price > .bg-danger-0").should("be.visible");

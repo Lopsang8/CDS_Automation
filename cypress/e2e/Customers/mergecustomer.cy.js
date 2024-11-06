@@ -7,6 +7,8 @@ describe("Customers", () => {
         cy.visit('/customers'); // Navigate to the customers page
     });
 
+
+
     it("Opens dropdown and selects 'Not Applicable' customer and merge them", () => {
         // Click on the 'Filter' button to open the filter options
         cy.contains('Filter').click(); 
@@ -37,12 +39,12 @@ describe("Customers", () => {
 
             // Open the dropdown container
             cy.get('[class="dropdown-heading-dropdown-arrow gray"]').dblclick({ force: true });
-           
-
-
            cy.mergeSearch(cellText)
         });
     });
+
+
+    
 
     it("Opens dropdown and selects Verified customer and merge them", () => {
         // Click on the 'Filter' button to open the filter options

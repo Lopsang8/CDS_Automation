@@ -22,7 +22,7 @@ describe('Payments', () => {
 
 
 
-    it.only('Verfies that Payment batch can be created from EFT Request Select Customer', () => {
+    it('Verfies that Payment batch can be created from EFT Request Select Customer', () => {
         cy.contains('span', 'EFT ( Select Customer )').should('be.visible').click()
         cy.contains('button', 'Next Step').click()
         cy.contains('h1', 'Payment by EFT Request').should('be.visible')

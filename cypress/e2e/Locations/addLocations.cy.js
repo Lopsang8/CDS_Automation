@@ -61,6 +61,8 @@ describe(" Add Location", () => {
 
   })
 
+  
+
   it("Verifies creating a Location", () => {
     cy.get("button.bg-primary-700").contains("Add A Location").click();
     cy.get("#locationName").should("be.visible");

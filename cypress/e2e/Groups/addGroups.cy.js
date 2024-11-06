@@ -9,10 +9,14 @@ describe("Add Group", () => {
     cy.visit("/permissions/groups");
   });
 
+
+
   it("Verifies list of groups and Add A Group button", () => {
     cy.get('div.permissionsgroups').should('be.visible')
     cy.get('div.other-accessories button').contains("Add A Group").click();
   });
+
+
 
   it("Verifies validation for Group Name field", () => {
     cy.visit("/permissions/groups/add-a-group");
@@ -23,6 +27,9 @@ describe("Add Group", () => {
     );
     cy.get('label.switch span').should('be.visible')   //toggle button should be visible
   });
+
+
+
 
   it("Verifies atleast one user to be assigned to the group", () => {
     cy.visit("/permissions/groups/add-a-group");
@@ -42,6 +49,9 @@ describe("Add Group", () => {
     );
   });
 
+
+
+  
   it("Verifies permissions are required validation and redirecting to Permissions tab", () => {
     cy.visit("/permissions/groups/add-a-group");
     cy.get('.add-a-group').should("be.visible");
