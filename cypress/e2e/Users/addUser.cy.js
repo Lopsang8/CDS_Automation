@@ -46,7 +46,7 @@ describe("Add a User", () => {
 
 
 
-  it.only("Verifies users can be created without filling the Locations and Permissions tab", () => {
+  it("Verifies users can be created without filling the Locations and Permissions tab", () => {
     cy.get('div.other-accessories button').should("be.visible").click();
     var rawFirstName = faker.person.firstName();
     var userFirstName = rawFirstName.replace(/[^a-zA-Z0-9'_-]/g, "");
