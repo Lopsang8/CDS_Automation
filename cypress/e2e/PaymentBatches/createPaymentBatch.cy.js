@@ -43,9 +43,5 @@ describe('Payments', () => {
         cy.wait(3000)
         cy.contains('button', 'Create Batch').click()
         cy.generateBankFile()
-
-
     })
-
-
 })

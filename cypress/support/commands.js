@@ -330,14 +330,14 @@ Cypress.Commands.add('numOfInvoices', () => {
       storedNumber = parseInt(text.trim(), 10);
       if (!isNaN(storedNumber)) {
         cy.log(storedNumber)
-        cy.get('td:nth-child(4) input[type="checkbox"]').check({force: true});
+        cy.get('td:nth-child(4) input[type="checkbox"]').check({ force: true });
       }
     });
   });
   cy.contains('button', 'Create Batch').click();
   cy.assertToastMessage('Batch Created Successfully')
   cy.get('table tbody tr').then(($rows) => {
-    const rowCount = $rows.length-1;
+    const rowCount = $rows.length - 1;
     if (storedNumber === rowCount) {
       cy.log('The number of invoices matches the number of rows on the payment summary page.');
     } else {

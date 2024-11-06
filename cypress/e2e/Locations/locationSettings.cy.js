@@ -32,6 +32,8 @@ describe("Location settings", () => {
     cy.log("Prices/Limits form validation is verified");
   });
 
+
+
   it("Verifies that bank details can be filled without validation errors", () => {
     cy.get("#headlessui-tabs-tab-\\:r3\\:") // Click on the Bank Details tab
       .click();
@@ -95,6 +97,9 @@ describe("Location settings", () => {
     cy.get("button.bg-success-500.text-danger-0").click(); // CLick on save and update button
   });
 
+
+
+
   it("Verifies Payment Bank Details form validation", () => {
     // Click on the Payment Bank Details tab
     cy.get("#headlessui-tabs-tab-\\:r4\\:").should("be.visible").click();
@@ -131,5 +136,6 @@ describe("Location settings", () => {
     // Check the toast message and assert its content
     cy.assertToastMessage("Location settings updated successfully");
   });
+
 });
 
